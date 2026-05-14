@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>藥劑科四級管制藥品總盤點表</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-200:#bfdbfe;--blue-300:#93c5fd;
+  --blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;
+  --blue-800:#1e40af;--blue-900:#1e3a8a;
+  --sky-50:#f0f9ff;--sky-100:#e0f2fe;
+  --slate-50:#f8fafc;--slate-100:#f1f5f9;--slate-200:#e2e8f0;
+  --slate-300:#cbd5e1;--slate-400:#94a3b8;--slate-500:#64748b;
+  --slate-600:#475569;--slate-700:#334155;--slate-800:#1e293b;--slate-900:#0f172a;
+  --teal-400:#2dd4bf;--teal-500:#14b8a6;--teal-600:#0d9488;
+  --amber-400:#fbbf24;--amber-500:#f59e0b;--amber-600:#d97706;
+  --red-400:#f87171;--red-500:#ef4444;--red-600:#dc2626;
+  --green-500:#22c55e;--green-600:#16a34a;
+  --indigo-500:#6366f1;--indigo-600:#4f46e5;
+  --violet-500:#8b5cf6;--violet-600:#7c3aed;
+  --orange-500:#f97316;--orange-600:#ea580c;
+  --font-main:'Noto Sans TC',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.06);
+  --shadow-md:0 4px 16px rgba(15,23,42,.08),0 1px 4px rgba(15,23,42,.04);
+  --shadow-lg:0 12px 40px rgba(15,23,42,.12),0 4px 12px rgba(15,23,42,.06);
+  --shadow-blue:0 8px 32px rgba(37,99,235,.18);
+  --radius:14px;--radius-sm:8px;--radius-xs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-main);background:#f0f4ff;background-image:radial-gradient(ellipse 900px 600px at 0% 0%,rgba(219,234,254,.8) 0%,transparent 60%),radial-gradient(ellipse 600px 500px at 100% 100%,rgba(186,230,253,.5) 0%,transparent 55%),linear-gradient(180deg,#eef2ff 0%,#f0f9ff 50%,#f0f4ff 100%);min-height:100vh;color:var(--slate-800);padding:28px 16px 56px;}
+.page-wrapper{max-width:920px;margin:0 auto;}
+.site-header{text-align:center;margin-bottom:32px;animation:fadeDown .5s ease;}
+.hospital-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--blue-600),var(--blue-700));color:#fff;font-size:11.5px;font-weight:600;letter-spacing:.08em;padding:5px 16px;border-radius:100px;margin-bottom:16px;box-shadow:0 4px 16px rgba(37,99,235,.3);}
+.hospital-badge::before{content:'🏥';font-size:13px;}
+.page-title{font-size:24px;font-weight:700;color:var(--slate-800);line-height:1.3;letter-spacing:-.01em;}
+.page-title em{color:var(--blue-600);font-style:normal;}
+.page-subtitle{font-size:12px;color:var(--slate-500);margin-top:6px;font-family:var(--font-mono);}
+.site-header-wrap{position:relative;}
+.header-admin-btn{position:absolute;right:0;top:4px;background:#fff;border:1.5px solid var(--slate-200);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--slate-600);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;font-family:var(--font-main);box-shadow:var(--shadow-sm);}
+.header-admin-btn:hover{border-color:var(--blue-400);color:var(--blue-600);background:var(--blue-50);}
+.cloud-sync-banner{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:10px;font-size:12px;font-weight:600;margin-bottom:16px;border:1.5px solid;transition:all .3s;}
+.cloud-sync-banner.idle{background:#f8fafc;border-color:var(--slate-200);color:var(--slate-500);}
+.cloud-sync-banner.loading{background:#eff6ff;border-color:var(--blue-300);color:var(--blue-700);}
+.cloud-sync-banner.success{background:#f0fdfa;border-color:var(--teal-400);color:var(--teal-700);}
+.cloud-sync-banner.error{background:#fef2f2;border-color:var(--red-400);color:var(--red-600);}
+.cloud-sync-banner.warning{background:#fffbeb;border-color:var(--amber-400);color:var(--amber-700);}
+.csb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .3s;}
+.cloud-sync-banner.idle .csb-dot{background:var(--slate-300);}
+.cloud-sync-banner.loading .csb-dot{background:var(--blue-500);animation:pulse 1s infinite;}
+.cloud-sync-banner.success .csb-dot{background:var(--teal-500);}
+.cloud-sync-banner.error .csb-dot{background:var(--red-500);}
+.cloud-sync-banner.warning .csb-dot{background:var(--amber-500);}
+.csb-text{flex:1;}
+.csb-action{padding:4px 12px;background:#fff;border:1.5px solid currentColor;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;color:inherit;font-family:var(--font-main);transition:all .15s;white-space:nowrap;}
+.csb-action:hover{opacity:.8;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.phases{display:flex;gap:0;margin-bottom:24px;background:#fff;border-radius:12px;padding:6px;box-shadow:var(--shadow-sm);border:1px solid var(--slate-200);}
+.phase{flex:1;text-align:center;font-size:11.5px;font-weight:600;letter-spacing:.04em;padding:8px 6px;border-radius:8px;color:var(--slate-400);transition:all .2s;cursor:default;user-select:none;}
+.phase.active{background:var(--blue-600);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3);}
+.phase.done{background:var(--teal-500);color:#fff;}
+.phase.clickable{cursor:pointer;}
+.phase.clickable:hover{opacity:.85;transform:translateY(-1px);}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-md);border:1px solid var(--slate-200);overflow:hidden;margin-bottom:16px;animation:fadeUp .4s ease;}
+.card-header{padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--slate-100);background:linear-gradient(135deg,var(--blue-600) 0%,var(--blue-700) 100%);}
+.card-header.teal-header{background:linear-gradient(135deg,var(--teal-500),var(--teal-600));}
+.card-header.indigo-header{background:linear-gradient(135deg,var(--indigo-500),var(--indigo-600));}
+.card-header.violet-header{background:linear-gradient(135deg,var(--violet-500),var(--violet-600));}
+.card-header.orange-header{background:linear-gradient(135deg,var(--orange-500),var(--orange-600));}
+.card-header.amber-header{background:linear-gradient(135deg,var(--amber-500),var(--amber-600));}
+.card-header-icon{width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.card-header-title{font-size:13.5px;font-weight:700;color:#fff;letter-spacing:.02em;}
+.card-body{padding:20px;}
+.step-badge{display:inline-flex;align-items:center;gap:7px;background:var(--blue-50);color:var(--blue-700);font-size:11.5px;font-weight:600;padding:4px 12px 4px 4px;border-radius:100px;margin-bottom:14px;border:1px solid var(--blue-200);}
+.step-badge-num{background:var(--blue-600);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--font-mono);font-weight:700;}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:4px;}
+label{font-size:12px;font-weight:600;color:var(--slate-600);letter-spacing:.03em;}
+label .req{color:var(--blue-500);margin-left:2px;}
+input[type="date"],input[type="text"],input[type="password"],select,textarea{font-family:var(--font-main);font-size:14px;padding:10px 14px;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);outline:none;transition:border-color .2s,box-shadow .2s;background:var(--slate-50);color:var(--slate-800);width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue-400);box-shadow:0 0 0 3px rgba(59,130,246,.12);background:#fff;}
+.shift-group{display:flex;gap:8px;flex-wrap:wrap;}
+.shift-btn{flex:1;min-width:100px;padding:12px 8px;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);background:var(--slate-50);cursor:pointer;font-family:var(--font-main);font-size:13px;font-weight:500;color:var(--slate-600);text-align:center;transition:all .15s;}
+.shift-btn:hover{border-color:var(--blue-300);color:var(--blue-600);background:var(--blue-50);}
+.shift-btn.active{border-color:var(--blue-500);background:linear-gradient(135deg,var(--blue-50),#dbeafe);color:var(--blue-800);font-weight:700;box-shadow:0 2px 10px rgba(59,130,246,.15);}
+.shift-btn .shift-icon{font-size:18px;display:block;margin-bottom:3px;}
+.shift-btn .shift-time{font-size:10px;color:var(--slate-400);font-family:var(--font-mono);}
+.shift-btn.active .shift-time{color:var(--blue-500);}
+.personnel-grid{display:flex;flex-direction:column;gap:8px;}
+.personnel-btn{padding:14px 16px;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);background:var(--slate-50);cursor:pointer;font-family:var(--font-main);font-size:13px;color:var(--slate-600);text-align:left;transition:all .15s;display:flex;align-items:flex-start;gap:12px;}
+.personnel-btn:hover{border-color:var(--blue-300);background:var(--blue-50);color:var(--blue-700);}
+.personnel-btn.active{border-color:var(--blue-500);background:linear-gradient(135deg,#eff6ff,#dbeafe);color:var(--blue-800);font-weight:600;box-shadow:0 2px 10px rgba(59,130,246,.15);}
+.personnel-btn .p-icon{font-size:22px;flex-shrink:0;}
+.personnel-btn .p-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.personnel-btn .p-cols{font-size:11px;color:var(--slate-400);font-family:var(--font-mono);line-height:1.7;}
+.personnel-btn.active .p-cols{color:var(--blue-500);}
+.workpoint-btn-group{display:flex;flex-direction:column;gap:6px;}
+.workpoint-btn{padding:12px 16px;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);background:var(--slate-50);cursor:pointer;font-family:var(--font-main);color:var(--slate-600);text-align:left;transition:all .15s;}
+.workpoint-btn:hover{border-color:var(--blue-300);background:var(--blue-50);}
+.workpoint-btn.active{border-color:var(--blue-500);background:linear-gradient(135deg,#eff6ff,#dbeafe);color:var(--blue-800);font-weight:600;box-shadow:0 2px 8px rgba(59,130,246,.12);}
+.wp-label{font-size:13.5px;font-weight:700;margin-bottom:3px;}
+.wp-locs{font-size:11px;color:var(--slate-400);font-family:var(--font-mono);}
+.workpoint-btn.active .wp-locs{color:var(--blue-500);}
+.loc-dropdown-wrap{position:relative;}
+.loc-dropdown-wrap select{appearance:none;padding-right:36px;cursor:pointer;}
+.loc-dropdown-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--slate-400);font-size:12px;}
+.progress-wrap{background:var(--blue-100);border-radius:100px;height:8px;margin-bottom:16px;overflow:hidden;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--blue-400),var(--blue-600));border-radius:100px;transition:width .4s ease;}
+.progress-label{font-size:11px;color:var(--slate-500);font-family:var(--font-mono);margin-bottom:8px;display:flex;justify-content:space-between;}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stat-box{text-align:center;padding:16px 8px;border-radius:var(--radius-sm);background:var(--slate-50);border:1.5px solid var(--slate-200);}
+.stat-box .val{font-family:var(--font-mono);font-size:26px;font-weight:700;color:var(--slate-700);display:block;}
+.stat-box .lbl{font-size:11px;color:var(--slate-400);margin-top:3px;}
+.stat-box.ok{border-color:var(--teal-500);background:#f0fdfa;}
+.stat-box.ok .val{color:var(--teal-600);}
+.stat-box.warn{border-color:var(--red-500);background:#fef2f2;}
+.stat-box.warn .val{color:var(--red-600);}
+.back-banner{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid var(--blue-200);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;gap:12px;}
+.back-banner-text{font-size:12px;color:var(--blue-700);font-weight:600;}
+.back-banner-text span{color:var(--slate-500);font-weight:400;font-size:11px;display:block;margin-top:2px;}
+.back-btn{padding:8px 16px;background:#fff;border:1.5px solid var(--blue-400);border-radius:8px;color:var(--blue-600);font-family:var(--font-main);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.back-btn:hover{background:var(--blue-600);color:#fff;border-color:var(--blue-600);}
+.drug-entry{border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);margin-bottom:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s;background:#fff;}
+.drug-entry:focus-within{border-color:var(--blue-300);box-shadow:0 2px 12px rgba(59,130,246,.1);}
+.drug-entry.done{border-color:var(--teal-500);background:#f0fdfa;}
+.drug-entry.current{border-color:var(--blue-500);box-shadow:0 4px 20px rgba(59,130,246,.2);}
+.drug-header{padding:11px 14px;display:flex;align-items:center;gap:10px;background:var(--slate-50);border-bottom:1px solid var(--slate-100);cursor:pointer;user-select:none;}
+.drug-entry.done .drug-header{background:#e6f9f5;border-bottom-color:#99f6e4;}
+.drug-entry.current .drug-header{background:var(--blue-50);border-bottom-color:var(--blue-200);}
+.drug-num{width:28px;height:28px;border-radius:7px;background:var(--slate-200);color:var(--slate-600);font-size:11px;font-weight:700;font-family:var(--font-mono);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.drug-entry.done .drug-num{background:var(--teal-500);color:#fff;}
+.drug-entry.current .drug-num{background:var(--blue-600);color:#fff;}
+.drug-info{flex:1;min-width:0;}
+.drug-name{font-size:13px;font-weight:600;color:var(--slate-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.drug-meta{font-size:11px;color:var(--slate-400);font-family:var(--font-mono);margin-top:2px;}
+.drug-status-icon{font-size:16px;}
+.drug-collapse-icon{font-size:12px;color:var(--slate-400);transition:transform .2s;}
+.drug-entry.open .drug-collapse-icon{transform:rotate(180deg);}
+.drug-body{padding:16px;display:none;}
+.drug-entry.open .drug-body,.drug-entry.current .drug-body{display:block;}
+.single-loc-field{margin-bottom:14px;}
+.single-loc-label{font-size:11px;font-weight:700;color:var(--blue-700);letter-spacing:.06em;font-family:var(--font-mono);text-transform:uppercase;margin-bottom:8px;padding:6px 12px;background:var(--blue-50);border:1px solid var(--blue-200);border-radius:6px;display:inline-block;}
+.loc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:12px;}
+.loc-field{display:flex;flex-direction:column;gap:4px;}
+.loc-label{font-size:10px;font-weight:700;color:var(--slate-500);letter-spacing:.06em;font-family:var(--font-mono);text-transform:uppercase;}
+.qty-stepper{display:flex;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);overflow:hidden;background:#fff;}
+.qty-stepper button{width:32px;border:none;background:var(--slate-100);color:var(--slate-500);font-size:16px;cursor:pointer;transition:background .1s;line-height:1;}
+.qty-stepper button:hover{background:var(--blue-100);color:var(--blue-600);}
+.qty-input{font-family:var(--font-mono);font-size:16px;font-weight:600;text-align:center;border:none;border-radius:0;flex:1;border-left:1px solid var(--slate-200);border-right:1px solid var(--slate-200);background:#fff;color:var(--slate-800);padding:8px 4px;width:100%;outline:none;-moz-appearance:textfield;}
+.qty-input:focus{background:var(--blue-50);}
+.qty-input::-webkit-inner-spin-button,.qty-input::-webkit-outer-spin-button{-webkit-appearance:none;}
+.qty-stepper-lg button{width:48px;font-size:22px;}
+.qty-input-lg{font-size:28px;padding:12px 8px;}
+.computer-qty-section{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:var(--slate-50);border-top:1px solid var(--slate-100);flex-wrap:wrap;}
+.drug-entry.done .computer-qty-section{background:#e6f9f5;border-top-color:#99f6e4;}
+.comp-label{font-size:11px;font-weight:600;color:var(--slate-500);white-space:nowrap;}
+.comp-input{font-family:var(--font-mono);font-size:15px;font-weight:600;width:80px;text-align:center;padding:7px 10px;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);background:#fff;color:var(--slate-800);outline:none;-moz-appearance:textfield;transition:border-color .2s,box-shadow .2s;}
+.comp-input:focus{border-color:var(--blue-400);box-shadow:0 0 0 3px rgba(59,130,246,.12);}
+.comp-input::-webkit-inner-spin-button,.comp-input::-webkit-outer-spin-button{-webkit-appearance:none;}
+.diff-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:100px;font-family:var(--font-mono);font-size:12px;font-weight:700;border:1.5px solid var(--slate-200);background:#fff;color:var(--slate-400);}
+.diff-badge.ok{border-color:var(--teal-500);background:#f0fdfa;color:var(--teal-600);}
+.diff-badge.warn{border-color:var(--red-500);background:#fef2f2;color:var(--red-600);}
+.total-display{display:flex;align-items:center;gap:7px;padding:6px 14px;background:#fff;border:1.5px solid var(--blue-200);border-radius:100px;font-family:var(--font-mono);font-size:13px;}
+.total-display span{font-size:10px;color:var(--slate-400);}
+.total-display strong{color:var(--blue-700);font-size:16px;}
+.nav-btns{display:flex;gap:8px;margin-top:12px;}
+.btn{flex:1;padding:10px 16px;border:none;border-radius:var(--radius-sm);font-family:var(--font-main);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.02em;}
+.btn-primary{background:linear-gradient(135deg,var(--blue-500),var(--blue-600));color:#fff;box-shadow:0 3px 10px rgba(37,99,235,.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(37,99,235,.35);}
+.btn-secondary{background:var(--slate-100);color:var(--slate-600);border:1px solid var(--slate-200);}
+.btn-secondary:hover{background:var(--slate-200);}
+.btn-success{background:linear-gradient(135deg,var(--teal-500),var(--teal-600));color:#fff;box-shadow:0 3px 10px rgba(20,184,166,.3);}
+.btn-success:hover{transform:translateY(-1px);}
+.btn-excel{background:linear-gradient(135deg,#217346,#1a5c38);color:#fff;box-shadow:0 3px 10px rgba(33,115,70,.3);}
+.btn-excel:hover{transform:translateY(-1px);}
+.btn-indigo{background:linear-gradient(135deg,var(--indigo-500),var(--indigo-600));color:#fff;box-shadow:0 3px 10px rgba(99,102,241,.3);}
+.btn-indigo:hover{transform:translateY(-1px);}
+.btn-danger{background:linear-gradient(135deg,var(--red-500),var(--red-600));color:#fff;box-shadow:0 3px 10px rgba(239,68,68,.3);}
+.btn-danger:hover{transform:translateY(-1px);}
+.btn-amber{background:linear-gradient(135deg,var(--amber-500),var(--amber-600));color:#fff;box-shadow:0 3px 10px rgba(245,158,11,.3);}
+.btn-amber:hover{transform:translateY(-1px);}
+.btn-orange{background:linear-gradient(135deg,var(--orange-500),var(--orange-600));color:#fff;box-shadow:0 3px 10px rgba(249,115,22,.3);}
+.btn-orange:hover{transform:translateY(-1px);}
+.btn-cloud{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;box-shadow:0 3px 10px rgba(14,165,233,.3);}
+.btn-cloud:hover{transform:translateY(-1px);}
+.val-msg{font-size:11px;color:var(--red-500);margin-top:4px;display:none;}
+.val-msg.show{display:block;}
+.drug-remark{margin-top:10px;}
+.drug-remark textarea{font-size:12px;padding:8px 10px;resize:none;height:52px;}
+#startBtn{display:block;width:100%;padding:18px;background:linear-gradient(135deg,var(--blue-600),var(--blue-700));color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-main);font-size:15px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-blue);letter-spacing:.04em;transition:all .2s;margin-top:4px;position:relative;overflow:hidden;}
+#startBtn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);}
+#startBtn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(37,99,235,.4);}
+#submitSection{display:none;}
+.submit-summary{padding:20px;background:linear-gradient(135deg,var(--teal-500),var(--teal-600));border-radius:var(--radius);color:#fff;margin-bottom:16px;text-align:center;}
+.submit-summary h3{font-size:17px;margin-bottom:4px;font-weight:700;}
+.submit-summary p{font-size:12px;opacity:.85;}
+.print-btn{width:100%;padding:14px;background:#fff;color:var(--blue-700);border:2px solid var(--blue-300);border-radius:var(--radius);font-family:var(--font-main);font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:8px;}
+.print-btn:hover{background:var(--blue-50);}
+.info-bar{font-size:11px;color:var(--slate-500);font-family:var(--font-mono);padding:10px 14px;background:var(--blue-50);border-radius:10px;border:1px solid var(--blue-100);display:flex;gap:16px;flex-wrap:wrap;}
+.info-bar strong{color:var(--blue-700);}
+.drug-filter-notice{display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid var(--amber-400);border-radius:var(--radius-sm);margin-bottom:12px;}
+.drug-filter-notice .filter-icon{font-size:16px;}
+.drug-filter-notice-text{font-size:12px;color:var(--amber-600);font-weight:600;flex:1;}
+.drug-filter-notice-text span{font-weight:400;color:var(--slate-500);font-size:11px;display:block;margin-top:2px;}
+.drug-filter-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;background:#fff;border:1.5px solid var(--amber-400);color:var(--amber-600);white-space:nowrap;}
+.wp-col-preview{margin-top:10px;padding:10px 14px;background:var(--blue-50);border:1.5px dashed var(--blue-300);border-radius:8px;display:none;}
+.wp-col-preview-title{font-size:11px;font-weight:700;color:var(--blue-600);margin-bottom:6px;}
+.wp-col-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.wp-col-chip{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;background:var(--blue-600);color:#fff;font-family:var(--font-mono);}
+#adminOverlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:9000;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;backdrop-filter:blur(4px);}
+#adminOverlay.open{display:flex;}
+.admin-modal{background:#fff;border-radius:18px;max-width:1060px;width:100%;box-shadow:0 32px 80px rgba(15,23,42,.3);overflow:hidden;animation:fadeUp .3s ease;border:1px solid var(--slate-200);}
+.admin-modal-header{background:linear-gradient(135deg,var(--slate-800),var(--slate-900));padding:20px 28px;display:flex;justify-content:space-between;align-items:center;}
+.admin-modal-header h2{color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px;}
+.admin-modal-header h2 .badge{background:rgba(255,255,255,.15);padding:2px 8px;border-radius:6px;font-size:10px;font-family:var(--font-mono);letter-spacing:.08em;}
+.role-badge{font-size:10px;padding:2px 8px;border-radius:100px;font-weight:700;}
+.role-badge.superadmin{background:#fde68a;color:#92400e;}
+.role-badge.admin{background:#bfdbfe;color:#1e40af;}
+.role-badge.viewer{background:#d1fae5;color:#065f46;}
+.admin-close{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:8px;font-size:16px;cursor:pointer;transition:all .15s;}
+.admin-close:hover{background:rgba(255,255,255,.25);}
+.admin-body{padding:28px;}
+#pinSection{text-align:center;padding:24px 0;}
+.pin-title{font-size:16px;font-weight:700;color:var(--slate-800);margin-bottom:6px;}
+.pin-subtitle{font-size:12px;color:var(--slate-400);margin-bottom:20px;}
+.pin-role-selector{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
+.pin-role-btn{padding:8px 20px;border:1.5px solid var(--slate-200);border-radius:8px;background:var(--slate-50);font-family:var(--font-main);font-size:12px;font-weight:600;cursor:pointer;color:var(--slate-500);transition:all .15s;}
+.pin-role-btn:hover{border-color:var(--blue-300);color:var(--blue-600);background:var(--blue-50);}
+.pin-role-btn.active{border-color:var(--blue-500);background:var(--blue-50);color:var(--blue-700);}
+.pin-role-btn.active.superadmin-btn{border-color:var(--amber-400);background:#fffbeb;color:var(--amber-700);}
+.pin-role-btn.active.viewer-btn{border-color:var(--teal-500);background:#f0fdfa;color:var(--teal-700);}
+.pin-input{font-family:var(--font-mono);font-size:32px;font-weight:700;text-align:center;letter-spacing:10px;width:200px;padding:14px;border:2px solid var(--slate-200);border-radius:var(--radius-sm);outline:none;margin:0 auto 16px;display:block;}
+.pin-input:focus{border-color:var(--indigo-500);box-shadow:0 0 0 4px rgba(99,102,241,.12);}
+.pin-error{color:var(--red-500);font-size:12px;margin-top:8px;display:none;}
+.pin-error.show{display:block;}
+.admin-layout{display:flex;gap:20px;}
+.admin-sidebar{width:200px;flex-shrink:0;}
+.admin-content{flex:1;min-width:0;}
+.admin-sidebar-tabs{display:flex;flex-direction:column;gap:4px;}
+.admin-tab{padding:10px 14px;border:1px solid transparent;border-radius:10px;background:none;font-family:var(--font-main);font-size:13px;font-weight:600;color:var(--slate-500);cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:all .15s;}
+.admin-tab:hover{background:var(--slate-100);color:var(--slate-700);}
+.admin-tab.active{background:var(--blue-50);border-color:var(--blue-200);color:var(--blue-700);}
+.admin-tab .tab-icon{font-size:15px;}
+.admin-tab.locked{opacity:.4;cursor:not-allowed;}
+.admin-tab.locked:hover{background:none;color:var(--slate-500);}
+.admin-sidebar-divider{height:1px;background:var(--slate-200);margin:8px 0;}
+.admin-section-label{font-size:10px;font-weight:700;color:var(--slate-400);letter-spacing:.08em;padding:4px 14px;text-transform:uppercase;}
+.admin-table-wrap{overflow-x:auto;border:1px solid var(--slate-200);border-radius:var(--radius-sm);}
+table.admin-tbl{width:100%;border-collapse:collapse;font-size:13px;}
+table.admin-tbl th{background:var(--slate-50);padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--slate-500);letter-spacing:.05em;border-bottom:1px solid var(--slate-200);white-space:nowrap;text-transform:uppercase;}
+table.admin-tbl td{padding:9px 12px;border-bottom:1px solid var(--slate-100);vertical-align:middle;}
+table.admin-tbl tr:last-child td{border-bottom:none;}
+table.admin-tbl tr:hover td{background:var(--slate-50);}
+.tbl-input{width:100%;font-family:var(--font-main);font-size:13px;padding:5px 8px;border:1.5px solid transparent;border-radius:6px;background:transparent;outline:none;}
+.tbl-input:focus{border-color:var(--blue-400);background:var(--blue-50);}
+.row-del-btn{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;color:var(--red-500);font-size:12px;padding:4px 10px;cursor:pointer;font-weight:600;}
+.row-del-btn:hover{background:var(--red-500);color:#fff;}
+.add-row-btn{margin-top:10px;padding:8px 16px;background:var(--blue-50);border:1.5px solid var(--blue-400);border-radius:8px;color:var(--blue-700);font-weight:600;font-size:13px;cursor:pointer;font-family:var(--font-main);}
+.add-row-btn:hover{background:var(--blue-600);color:#fff;border-color:var(--blue-600);}
+.date-filter-bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;padding:16px;background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--radius-sm);margin-bottom:16px;}
+.date-filter-bar .form-group{margin:0;min-width:140px;flex:1;}
+.date-filter-bar label{font-size:11px;font-weight:700;color:var(--blue-700);}
+.date-filter-bar input[type="date"]{font-size:13px;padding:8px 12px;background:#fff;}
+.filter-btn{padding:8px 18px;border:none;border-radius:var(--radius-sm);background:var(--blue-600);color:#fff;font-family:var(--font-main);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;height:38px;align-self:flex-end;}
+.filter-btn:hover{background:var(--blue-700);}
+.filter-btn.clear{background:var(--slate-200);color:var(--slate-600);}
+.filter-btn.clear:hover{background:var(--slate-300);}
+.filter-result-label{font-size:11px;color:var(--blue-600);font-family:var(--font-mono);font-weight:600;padding:4px 10px;background:var(--blue-100);border-radius:100px;white-space:nowrap;align-self:flex-end;}
+.history-empty{text-align:center;padding:40px 20px;color:var(--slate-400);font-size:13px;}
+.history-empty .empty-icon{font-size:36px;margin-bottom:8px;opacity:.5;}
+.stat-diff-pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;font-family:var(--font-mono);}
+.stat-diff-pill.ok{background:#f0fdfa;color:var(--teal-600);border:1px solid var(--teal-500);}
+.stat-diff-pill.warn{background:#fef2f2;color:var(--red-600);border:1px solid var(--red-400);}
+.record-detail-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:10000;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px);}
+.record-detail-overlay.open{display:flex;}
+.record-detail-modal{background:#fff;border-radius:16px;max-width:700px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 32px 80px rgba(15,23,42,.3);}
+.record-detail-header{padding:18px 24px;background:linear-gradient(135deg,var(--blue-600),var(--blue-700));display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;}
+.record-detail-header h3{color:#fff;font-size:14px;font-weight:700;}
+.record-detail-body{padding:20px 24px;}
+.record-meta-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+.record-meta-item{padding:10px 14px;background:var(--slate-50);border-radius:8px;border:1px solid var(--slate-200);}
+.record-meta-label{font-size:10px;color:var(--slate-400);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+.record-meta-value{font-size:14px;font-weight:700;color:var(--slate-800);}
+.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.admin-actions .btn{flex:none;padding:10px 18px;font-size:13px;}
+.col-table-wrap{border:1px solid var(--slate-200);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:12px;}
+.col-tbl{width:100%;border-collapse:collapse;}
+.col-tbl th{background:var(--slate-50);padding:9px 12px;font-size:11px;font-weight:700;color:var(--slate-500);text-align:left;border-bottom:1px solid var(--slate-200);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
+.col-tbl td{padding:8px 12px;border-bottom:1px solid var(--slate-100);vertical-align:middle;}
+.col-tbl tr:last-child td{border-bottom:none;}
+.col-tbl tr:hover td{background:var(--slate-50);}
+.col-tbl tr.col-fixed td{background:#fffbeb;}
+.col-label-input{width:100%;padding:5px 8px;border:1.5px solid transparent;border-radius:6px;font-size:13px;font-family:var(--font-main);background:transparent;outline:none;}
+.col-label-input:focus{border-color:var(--blue-400);background:var(--blue-50);}
+.col-key-badge{font-family:var(--font-mono);font-size:10px;color:var(--slate-400);background:var(--slate-100);padding:2px 7px;border-radius:4px;border:1px solid var(--slate-200);}
+.col-fixed-badge{font-size:10px;color:var(--amber-600);background:#fffbeb;border:1px solid var(--amber-400);padding:2px 7px;border-radius:4px;}
+.col-del-btn{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;color:var(--red-500);font-size:11px;padding:4px 8px;cursor:pointer;font-weight:600;white-space:nowrap;}
+.col-del-btn:hover{background:var(--red-500);color:#fff;}
+.col-toggle-checkbox{accent-color:var(--blue-500);width:16px;height:16px;cursor:pointer;}
+.new-col-form{padding:14px;background:var(--blue-50);border:1.5px solid var(--blue-200);border-radius:var(--radius-sm);display:none;margin-bottom:12px;}
+.new-col-form.show{display:block;}
+.new-col-form h4{font-size:12px;font-weight:700;color:var(--blue-700);margin-bottom:12px;}
+.new-col-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.new-col-grid .form-group{margin-bottom:0;}
+.col-mgmt-toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.col-mgmt-toolbar .btn{flex:none;padding:8px 14px;font-size:12px;}
+.col-search{flex:1;min-width:150px;padding:8px 12px;border:1.5px solid var(--slate-200);border-radius:8px;font-size:13px;font-family:var(--font-main);outline:none;}
+.col-search:focus{border-color:var(--blue-400);}
+.audit-row{padding:10px 14px;border-bottom:1px solid var(--slate-100);font-size:12px;display:flex;gap:12px;align-items:flex-start;}
+.audit-row:last-child{border-bottom:none;}
+.audit-time{font-family:var(--font-mono);font-size:10px;color:var(--slate-400);white-space:nowrap;padding-top:1px;}
+.audit-role-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;}
+.audit-action{color:var(--slate-600);flex:1;}
+.audit-action strong{color:var(--slate-800);}
+.audit-empty{text-align:center;padding:30px;color:var(--slate-400);font-size:13px;}
+.pin-change-form{max-width:320px;}
+.pin-change-form .form-group{margin-bottom:14px;}
+.perm-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.perm-info-card{padding:14px;border-radius:10px;border:2px solid var(--slate-200);}
+.perm-info-card.superadmin-card{border-color:var(--amber-400);background:#fffbeb;}
+.perm-info-card.admin-card{border-color:var(--blue-300);background:var(--blue-50);}
+.perm-info-card.viewer-card{border-color:var(--teal-400);background:#f0fdfa;}
+.perm-info-card h4{font-size:13px;font-weight:700;margin-bottom:8px;}
+.perm-info-card.superadmin-card h4{color:var(--amber-700);}
+.perm-info-card.admin-card h4{color:var(--blue-700);}
+.perm-info-card.viewer-card h4{color:var(--teal-700);}
+.perm-list{list-style:none;font-size:11px;color:var(--slate-600);line-height:1.8;}
+.perm-list li::before{content:'✓ ';color:var(--teal-500);font-weight:700;}
+.perm-list li.denied::before{content:'✕ ';color:var(--red-400);}
+.setting-section{margin-bottom:24px;}
+.setting-section-title{font-size:13px;font-weight:700;color:var(--slate-700);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--blue-100);display:flex;align-items:center;gap:6px;}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1.5px solid var(--slate-200);border-radius:8px;margin-bottom:8px;gap:12px;background:var(--slate-50);}
+.setting-row:hover{border-color:var(--blue-300);background:var(--blue-50);}
+.setting-info h4{font-size:13px;font-weight:600;color:var(--slate-700);margin-bottom:2px;}
+.setting-info p{font-size:11px;color:var(--slate-400);}
+.edit-field-wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.edit-field-wrap input{width:200px;font-size:13px;padding:7px 10px;}
+.edit-field-wrap .btn{flex:none;padding:7px 14px;font-size:12px;}
+.shift-editor-list{display:flex;flex-direction:column;gap:8px;}
+.shift-editor-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:center;padding:8px 12px;border:1.5px solid var(--slate-200);border-radius:8px;background:var(--slate-50);}
+.shift-editor-row input{font-size:12px;padding:6px 9px;}
+.shift-editor-row .row-del-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;padding:0;}
+.personnel-editor-list{display:flex;flex-direction:column;gap:10px;}
+.personnel-editor-row{padding:12px;border:1.5px solid var(--slate-200);border-radius:8px;background:var(--slate-50);}
+.personnel-editor-row-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.personnel-editor-row-header input{flex:1;font-size:13px;font-weight:600;padding:6px 10px;}
+.personnel-editor-row textarea{font-size:11px;padding:7px 10px;resize:vertical;height:60px;width:100%;}
+.wp-editor-table{width:100%;border-collapse:collapse;}
+.wp-editor-table th{background:var(--slate-50);padding:8px 10px;font-size:11px;font-weight:700;color:var(--slate-500);text-align:left;border-bottom:1px solid var(--slate-200);}
+.wp-editor-table td{padding:7px 10px;border-bottom:1px solid var(--slate-100);vertical-align:top;}
+.wp-editor-table tr:last-child td{border-bottom:none;}
+.wp-editor-table input{font-size:12px;padding:5px 8px;width:100%;}
+.cloud-config-box{padding:16px;background:var(--slate-50);border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);margin-bottom:14px;}
+.cloud-config-box h4{font-size:13px;font-weight:700;color:var(--slate-700);margin-bottom:10px;}
+.cloud-url-input{font-family:var(--font-mono);font-size:11px;padding:8px 12px;width:100%;border:1.5px solid var(--slate-200);border-radius:6px;background:#fff;outline:none;color:var(--slate-700);}
+.cloud-url-input:focus{border-color:var(--blue-400);box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.cloud-test-row{display:flex;gap:8px;margin-top:8px;}
+.next-inv-panel{display:none;margin-top:16px;padding:24px;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:2px solid var(--blue-300);border-radius:var(--radius);text-align:center;}
+.next-inv-panel h3{font-size:16px;font-weight:700;color:var(--blue-800);margin-bottom:6px;}
+.next-inv-panel p{font-size:12px;color:var(--slate-500);margin-bottom:16px;}
+.next-inv-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.btn-next-same{padding:12px 24px;background:linear-gradient(135deg,var(--blue-500),var(--blue-600));color:#fff;border:none;border-radius:var(--radius-sm);font-family:var(--font-main);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(37,99,235,.3);transition:all .15s;}
+.btn-next-same:hover{transform:translateY(-1px);}
+.btn-next-diff{padding:12px 24px;background:#fff;color:var(--blue-700);border:2px solid var(--blue-400);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
+.btn-next-diff:hover{background:var(--blue-50);}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media print{body{background:#fff;padding:0;}.card{box-shadow:none;border:1px solid #ddd;}#startBtn,.nav-btns,.print-btn,.header-admin-btn,#adminOverlay,.back-banner,.cloud-sync-banner{display:none!important;}.drug-body{display:block!important;}}
+@media(max-width:640px){.admin-layout{flex-direction:column;}.admin-sidebar{width:100%;}.admin-sidebar-tabs{flex-direction:row;flex-wrap:wrap;}.record-meta-grid,.perm-info-grid,.new-col-grid{grid-template-columns:1fr;}.shift-editor-row{grid-template-columns:1fr 1fr;gap:6px;}}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <div id="cloudSyncBanner" class="cloud-sync-banner idle">
+    <div class="csb-dot"></div>
+    <span class="csb-text" id="csbText">☁️ 雲端同步：尚未設定 GAS 網址</span>
+    <button class="csb-action" id="csbAction" onclick="triggerCloudAction()">設定</button>
+  </div>
+
+  <div class="site-header-wrap">
+    <header class="site-header">
+      <div class="hospital-badge" id="hospitalBadge">佛教慈濟醫療財團法人台中慈濟醫院</div>
+      <h1 class="page-title" id="pageMainTitle">藥劑科 <em id="pageTitleEm">四級管制藥品</em> 總盤點表</h1>
+      <div class="page-subtitle" id="pageSubtitle">管四總盤點一 + 特別關懷 20191206 ─ v5.1（雲端全同步版）</div>
+    </header>
+    <button class="header-admin-btn" onclick="openAdminPin()">⚙️ 後台管理</button>
+  </div>
+
+  <div class="phases">
+    <div class="phase active" id="ph1" onclick="gotoPhase(1)">① 基本資訊</div>
+    <div class="phase" id="ph2" onclick="gotoPhase(2)">② 盤點作業</div>
+    <div class="phase" id="ph3" onclick="gotoPhase(3)">③ 確認送出</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div id="infoSection">
+    <div class="card">
+      <div class="card-header"><div class="card-header-icon">📅</div><div class="card-header-title">盤點日期 &amp; 時段</div></div>
+      <div class="card-body">
+        <div class="step-badge"><span class="step-badge-num">1</span>選擇日期</div>
+        <div class="form-group" style="margin-bottom:18px;">
+          <label for="invDate">盤點日期 <span class="req">*</span></label>
+          <input type="date" id="invDate"/>
+          <div class="val-msg" id="invDateMsg">請選擇盤點日期</div>
+        </div>
+        <div class="step-badge"><span class="step-badge-num">2</span>選擇班別</div>
+        <label>班別 <span class="req">*</span></label>
+        <div style="height:8px;"></div>
+        <div class="shift-group" id="shiftGroup"></div>
+        <div class="val-msg" id="shiftMsg">請選擇班別</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-header-icon">👥</div><div class="card-header-title">盤點人員類別</div></div>
+      <div class="card-body">
+        <div class="step-badge"><span class="step-badge-num">3</span>選擇人員類別</div>
+        <div class="personnel-grid" id="personnelGrid"></div>
+        <div class="val-msg" id="personnelMsg" style="margin-top:8px;">請選擇盤點人員類別</div>
+      </div>
+    </div>
+
+    <div class="card" id="workpointCard" style="display:none;">
+      <div class="card-header"><div class="card-header-icon">🗂️</div><div class="card-header-title">工作點</div></div>
+      <div class="card-body">
+        <div class="step-badge"><span class="step-badge-num">4</span>選擇工作點</div>
+        <div class="workpoint-btn-group" id="workpointBtnGroup"></div>
+        <div class="val-msg" id="workpointMsg" style="margin-top:8px;">請選擇工作點</div>
+        <div class="wp-col-preview" id="wpColPreview">
+          <div class="wp-col-preview-title">📋 此工作點包含的盤點位置：</div>
+          <div class="wp-col-chips" id="wpColChips"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="locationCard" style="display:none;">
+      <div class="card-header"><div class="card-header-icon">📍</div><div class="card-header-title">盤點位置</div></div>
+      <div class="card-body">
+        <div class="step-badge"><span class="step-badge-num">5</span>選擇盤點位置</div>
+        <div class="loc-dropdown-wrap">
+          <select id="locationSelect" onchange="selectLocation(this.value)">
+            <option value="">── 請選擇盤點位置 ──</option>
+          </select>
+          <span class="loc-dropdown-arrow">▾</span>
+        </div>
+        <div class="val-msg" id="locationMsg" style="margin-top:6px;">請選擇盤點位置</div>
+        <div id="drugPreviewBox" style="display:none;margin-top:12px;padding:10px 14px;background:var(--blue-50);border:1.5px solid var(--blue-200);border-radius:8px;">
+          <div style="font-size:11px;font-weight:700;color:var(--blue-600);margin-bottom:6px;">📋 此位置需盤點藥品（<span id="previewCount">0</span> 項）</div>
+          <div id="drugPreviewList" style="font-size:11px;color:var(--slate-600);line-height:1.9;font-family:var(--font-mono);"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-header-icon">👤</div><div class="card-header-title">人員資訊</div></div>
+      <div class="card-body">
+        <div class="step-badge"><span class="step-badge-num">6</span>藥師姓名</div>
+        <div class="form-group">
+          <label for="pharmacist">執行藥師 <span class="req">*</span></label>
+          <input type="text" id="pharmacist" placeholder="請輸入藥師姓名"/>
+          <div class="val-msg" id="pharmacistMsg">請輸入藥師姓名</div>
+        </div>
+      </div>
+    </div>
+
+    <button id="startBtn" onclick="startInventory()">開始盤點 →</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="inventorySection" style="display:none;">
+    <div class="back-banner">
+      <div class="back-banner-text">正在進行盤點作業<span>可返回修改基本資訊，盤點進度不會遺失</span></div>
+      <button class="back-btn" onclick="gotoPhase(1)">← 返回基本資訊</button>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-header-icon">📊</div><div class="card-header-title">盤點進度</div></div>
+      <div class="card-body">
+        <div class="progress-label">
+          <span id="progressText">0 / ? 項目</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+        <div class="summary-grid">
+          <div class="stat-box" id="statDone"><span class="val" id="doneCount">0</span><div class="lbl">已完成</div></div>
+          <div class="stat-box" id="statPending"><span class="val" id="pendCount">?</span><div class="lbl">待盤點</div></div>
+          <div class="stat-box" id="statDiff"><span class="val" id="diffCount">0</span><div class="lbl">有差異</div></div>
+        </div>
+        <div class="info-bar">
+          <span>📅 <strong id="infDate">—</strong></span>
+          <span>🕐 <strong id="infShift">—</strong></span>
+          <span>🗂 <strong id="infWP">—</strong></span>
+          <span>📍 <strong id="infLocation">—</strong></span>
+          <span>👤 <strong id="infPharm">—</strong></span>
+        </div>
+      </div>
+    </div>
+    <div id="drugFilterNotice" class="drug-filter-notice" style="display:none;">
+      <span class="filter-icon">📍</span>
+      <div class="drug-filter-notice-text">僅顯示「<span id="filterLocName" style="font-weight:700;"></span>」位置的盤點品項<span id="filterNoticeDetail"></span></div>
+      <span class="drug-filter-badge" id="filterNoticeBadge"></span>
+    </div>
+    <div id="drugEntries"></div>
+    <div id="submitSection">
+      <div class="submit-summary">
+        <h3>✅ 盤點作業完成</h3>
+        <p id="submitMsg">所有藥品已完成盤點</p>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="form-group" style="margin-bottom:12px;">
+            <label for="supervisorName">主管簽核</label>
+            <input type="text" id="supervisorName" placeholder="主管姓名（選填）"/>
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label for="finalRemark">整體備註</label>
+            <textarea id="finalRemark" style="resize:none;height:64px;font-size:13px;padding:8px 12px;" placeholder="若有不良品：請寫上藥名及數量並交給主管"></textarea>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-success" id="submitBtn" onclick="submitForm()" style="flex:2;padding:14px;font-size:14px;">🔒 確認提交盤點表</button>
+            <button class="btn btn-excel" onclick="exportCurrentExcel()" style="flex:1;padding:14px;font-size:14px;">📥 匯出 Excel</button>
+          </div>
+          <button class="print-btn" onclick="window.print()">🖨️ 列印盤點表</button>
+        </div>
+      </div>
+      <div class="next-inv-panel" id="nextInvPanel">
+        <h3>🎉 盤點表已提交成功！</h3>
+        <p id="nextInvMsg">資料已儲存，請選擇下一步</p>
+        <div class="next-inv-btns">
+          <button class="btn-next-same" onclick="startNextInventorySame()">📋 同位置再填一份</button>
+          <button class="btn-next-diff" onclick="startNextInventoryNew()">🔄 填寫不同位置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN OVERLAY -->
+<div id="adminOverlay">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <h2>⚙️ 後台管理系統 <span class="badge">ADMIN</span> <span class="role-badge" id="currentRoleBadge" style="display:none;"></span></h2>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span id="sessionTimer" style="font-size:11px;color:rgba(255,255,255,.6);font-family:var(--font-mono);"></span>
+        <button class="admin-close" onclick="closeAdmin()">✕</button>
+      </div>
+    </div>
+    <div class="admin-body">
+      <div id="pinSection">
+        <div class="pin-title">🔐 後台管理登入</div>
+        <div class="pin-subtitle">請選擇角色並輸入對應 PIN 碼</div>
+        <div class="pin-role-selector">
+          <button class="pin-role-btn superadmin-btn active" id="roleBtn-superadmin" onclick="selectLoginRole('superadmin',this)">👑 超級管理員</button>
+          <button class="pin-role-btn" id="roleBtn-admin" onclick="selectLoginRole('admin',this)">🔧 管理員</button>
+          <button class="pin-role-btn viewer-btn" id="roleBtn-viewer" onclick="selectLoginRole('viewer',this)">👁 檢視員</button>
+        </div>
+        <input type="password" class="pin-input" id="pinInput" maxlength="6" placeholder="••••" oninput="clearPinError()" onkeydown="if(event.key==='Enter')verifyPin()"/>
+        <div class="pin-error" id="pinError">PIN 碼錯誤，請再試一次</div>
+        <div id="lockoutMsg" style="display:none;color:var(--red-500);font-size:12px;margin-top:8px;"></div>
+        <button class="btn btn-indigo" style="width:160px;margin:12px auto 0;display:block;" onclick="verifyPin()">確認登入</button>
+      </div>
+
+      <div id="adminContent" style="display:none;">
+        <div class="admin-layout">
+          <div class="admin-sidebar">
+            <div class="admin-sidebar-tabs" id="adminSidebarTabs">
+              <div class="admin-section-label">資料管理</div>
+              <button class="admin-tab active" id="tab-history" onclick="switchAdminTab('history',this)"><span class="tab-icon">📋</span> 盤點紀錄</button>
+              <button class="admin-tab" id="tab-drugs" onclick="switchAdminTab('drugs',this)"><span class="tab-icon">💊</span> 藥品管理</button>
+              <button class="admin-tab" id="tab-location-drugs" onclick="switchAdminTab('location-drugs',this)"><span class="tab-icon">🗺️</span> 位置藥品</button>
+              <div class="admin-sidebar-divider"></div>
+              <div class="admin-section-label">設定</div>
+              <button class="admin-tab" id="tab-siteconfig" onclick="switchAdminTab('siteconfig',this)"><span class="tab-icon">🖊️</span> 標題班別設定</button>
+              <button class="admin-tab" id="tab-wpconfig" onclick="switchAdminTab('wpconfig',this)"><span class="tab-icon">🗂️</span> 工作點設定</button>
+              <button class="admin-tab" id="tab-cols" onclick="switchAdminTab('cols',this)"><span class="tab-icon">🗃️</span> 欄位管理</button>
+              <button class="admin-tab" id="tab-export" onclick="switchAdminTab('export',this)"><span class="tab-icon">📥</span> 資料匯出</button>
+              <button class="admin-tab" id="tab-audit" onclick="switchAdminTab('audit',this)"><span class="tab-icon">📝</span> 操作日誌</button>
+              <button class="admin-tab" id="tab-security" onclick="switchAdminTab('security',this)"><span class="tab-icon">🔑</span> 安全設定</button>
+              <button class="admin-tab" id="tab-cloud" onclick="switchAdminTab('cloud',this)"><span class="tab-icon">☁️</span> 雲端設定</button>
+            </div>
+          </div>
+
+          <div class="admin-content">
+            <div id="adminTab-history">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+                <div><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">盤點紀錄查詢</h3><p style="font-size:12px;color:var(--slate-400);margin-top:2px;">篩選並查看歷史盤點資料</p></div>
+                <button class="btn btn-cloud" style="flex:none;padding:8px 14px;font-size:12px;" onclick="adminPullAllFromCloud()">☁️ 從雲端同步紀錄</button>
+              </div>
+              <div class="date-filter-bar">
+                <div class="form-group"><label>開始日期</label><input type="date" id="filterDateFrom"/></div>
+                <div class="form-group"><label>結束日期</label><input type="date" id="filterDateTo"/></div>
+                <div class="form-group" style="min-width:110px;"><label>班別篩選</label><select id="filterShift" style="font-size:13px;padding:8px 12px;"><option value="">全部</option></select></div>
+                <div class="form-group" style="min-width:110px;"><label>位置篩選</label><select id="filterLocation" style="font-size:13px;padding:8px 12px;"><option value="">全部</option></select></div>
+                <button class="filter-btn" onclick="applyHistoryFilter()">🔍 篩選</button>
+                <button class="filter-btn clear" onclick="clearHistoryFilter()">✕ 清除</button>
+                <span class="filter-result-label" id="filterResultLabel" style="display:none;"></span>
+              </div>
+              <div class="admin-table-wrap" id="historyTableWrap">
+                <table class="admin-tbl"><thead><tr><th>#</th><th>日期</th><th>班別</th><th>位置</th><th>藥師</th><th>完成</th><th>差異</th><th>操作</th></tr></thead>
+                <tbody id="historyTbody"></tbody></table>
+              </div>
+              <div class="history-empty" id="historyEmpty" style="display:none;"><div class="empty-icon">📭</div><div>目前沒有符合條件的紀錄</div></div>
+              <div class="admin-actions" id="historyActions">
+                <button class="btn btn-excel" onclick="exportFilteredHistory()">📥 匯出篩選結果</button>
+                <button class="btn btn-orange" onclick="exportMergedAllUnits()">📊 彙整所有單位</button>
+                <button class="btn btn-danger" id="clearHistoryBtn" onclick="clearAllHistory()">🗑️ 清除所有紀錄</button>
+              </div>
+            </div>
+
+            <div id="adminTab-drugs" style="display:none;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+                <div><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">藥品清單管理</h3><p style="font-size:12px;color:var(--slate-400);margin-top:2px;">新增、編輯或刪除藥品資料（儲存後自動同步雲端）</p></div>
+              </div>
+              <div class="admin-table-wrap"><table class="admin-tbl"><thead><tr><th>#</th><th>儲位</th><th>藥品名稱</th><th>品牌名</th><th>操作</th></tr></thead>
+              <tbody id="adminDrugTbody"></tbody></table></div>
+              <button class="add-row-btn" id="addDrugRowBtn" onclick="addDrugRow()">＋ 新增藥品</button>
+              <div class="admin-actions">
+                <button class="btn btn-indigo" id="saveDrugsBtn" onclick="saveAdminDrugs()">💾 儲存並同步雲端</button>
+              </div>
+            </div>
+
+            <div id="adminTab-location-drugs" style="display:none;">
+              <div style="margin-bottom:16px;"><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">位置藥品對應管理</h3><p style="font-size:12px;color:var(--slate-400);margin-top:2px;">設定每個盤點位置對應的藥品清單。未設定的位置將顯示全部藥品。</p></div>
+              <div style="margin-bottom:12px;">
+                <label style="font-size:12px;font-weight:700;color:var(--slate-600);">選擇盤點位置</label>
+                <div style="height:6px;"></div>
+                <div class="loc-dropdown-wrap">
+                  <select id="locDrugSelect" onchange="renderLocDrugEditor(this.value)" style="max-width:320px;"><option value="">── 請選擇位置 ──</option></select>
+                  <span class="loc-dropdown-arrow">▾</span>
+                </div>
+              </div>
+              <div id="locDrugEditorWrap" style="display:none;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;flex-wrap:wrap;">
+                  <div style="font-size:12px;font-weight:700;color:var(--slate-600);">勾選此位置需盤點的藥品</div>
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn btn-secondary" style="flex:none;padding:6px 12px;font-size:11px;" onclick="locDrugCheckAll()">全選</button>
+                    <button class="btn btn-secondary" style="flex:none;padding:6px 12px;font-size:11px;" onclick="locDrugUncheckAll()">全不選</button>
+                  </div>
+                </div>
+                <div class="admin-table-wrap">
+                  <table class="admin-tbl"><thead><tr><th style="width:40px;">選</th><th>#</th><th>儲位</th><th>藥品名稱</th></tr></thead>
+                  <tbody id="locDrugTbody"></tbody></table>
+                </div>
+                <div class="admin-actions">
+                  <button class="btn btn-indigo" onclick="saveLocDrugMapping()">💾 儲存並同步雲端</button>
+                  <button class="btn btn-secondary" onclick="clearLocDrugMapping()">↩ 清除（顯示全部）</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="adminTab-siteconfig" style="display:none;">
+              <div style="margin-bottom:16px;"><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">標題 &amp; 班別設定</h3><p style="font-size:12px;color:var(--slate-400);margin-top:2px;">修改後點儲存，自動同步至所有電腦</p></div>
+              <div class="setting-section">
+                <div class="setting-section-title">🏥 頁面標題</div>
+                <div class="setting-row"><div class="setting-info"><h4>醫院徽章文字</h4></div><div class="edit-field-wrap"><input type="text" id="cfg-hospitalBadge" style="width:260px;"/><button class="btn btn-primary" style="flex:none;padding:7px 14px;font-size:12px;" onclick="saveCfgField('hospitalBadge')">儲存</button></div></div>
+                <div class="setting-row"><div class="setting-info"><h4>頁面主標題前段</h4></div><div class="edit-field-wrap"><input type="text" id="cfg-titlePrefix" style="width:180px;"/><button class="btn btn-primary" style="flex:none;padding:7px 14px;font-size:12px;" onclick="saveCfgField('titlePrefix')">儲存</button></div></div>
+                <div class="setting-row"><div class="setting-info"><h4>頁面主標題強調文字</h4></div><div class="edit-field-wrap"><input type="text" id="cfg-titleEm" style="width:180px;"/><button class="btn btn-primary" style="flex:none;padding:7px 14px;font-size:12px;" onclick="saveCfgField('titleEm')">儲存</button></div></div>
+                <div class="setting-row"><div class="setting-info"><h4>頁面主標題後段</h4></div><div class="edit-field-wrap"><input type="text" id="cfg-titleSuffix" style="width:180px;"/><button class="btn btn-primary" style="flex:none;padding:7px 14px;font-size:12px;" onclick="saveCfgField('titleSuffix')">儲存</button></div></div>
+                <div class="setting-row"><div class="setting-info"><h4>副標題（版本說明）</h4></div><div class="edit-field-wrap"><input type="text" id="cfg-subtitle" style="width:280px;"/><button class="btn btn-primary" style="flex:none;padding:7px 14px;font-size:12px;" onclick="saveCfgField('subtitle')">儲存</button></div></div>
+                <div style="margin-top:10px;text-align:right;"><button class="btn btn-success" style="flex:none;padding:9px 20px;font-size:13px;" onclick="saveAllCfgTitle()">💾 儲存全部並同步雲端</button></div>
+              </div>
+              <div class="setting-section">
+                <div class="setting-section-title">🕐 班別清單</div>
+                <div class="shift-editor-list" id="shiftEditorList"></div>
+                <button class="add-row-btn" onclick="addShiftRow()" style="margin-top:8px;">＋ 新增班別</button>
+                <div style="margin-top:12px;text-align:right;"><button class="btn btn-success" style="flex:none;padding:9px 20px;font-size:13px;" onclick="saveShiftConfig()">💾 儲存並同步雲端</button></div>
+              </div>
+              <div class="setting-section">
+                <div class="setting-section-title">👥 盤點人員類別</div>
+                <div class="personnel-editor-list" id="personnelEditorList"></div>
+                <button class="add-row-btn" onclick="addPersonnelRow()" style="margin-top:8px;">＋ 新增人員類別</button>
+                <div style="margin-top:12px;text-align:right;"><button class="btn btn-success" style="flex:none;padding:9px 20px;font-size:13px;" onclick="savePersonnelConfig()">💾 儲存並同步雲端</button></div>
+              </div>
+            </div>
+
+            <div id="adminTab-wpconfig" style="display:none;">
+              <div style="margin-bottom:16px;"><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">工作點設定</h3></div>
+              <div style="margin-bottom:12px;">
+                <label style="font-size:12px;font-weight:700;color:var(--slate-600);">選擇人員類別</label>
+                <div style="height:6px;"></div>
+                <div class="loc-dropdown-wrap">
+                  <select id="wpPersonnelSelect" onchange="renderWPEditor(this.value)" style="max-width:200px;"><option value="">── 請選擇 ──</option></select>
+                  <span class="loc-dropdown-arrow">▾</span>
+                </div>
+              </div>
+              <div id="wpEditorWrap" style="display:none;">
+                <div style="padding:12px;background:#fffbeb;border:1.5px solid var(--amber-400);border-radius:8px;margin-bottom:14px;font-size:12px;color:var(--amber-700);">⚠️ 「盤點欄位代號」必須與「欄位管理」中的代號一致。</div>
+                <div class="admin-table-wrap" style="margin-bottom:10px;">
+                  <table class="wp-editor-table admin-tbl">
+                    <thead><tr><th>工作點代號</th><th>顯示名稱</th><th>盤點位置（逗號分隔）</th><th>欄位代號</th><th style="width:50px;">刪除</th></tr></thead>
+                    <tbody id="wpEditorTbody"></tbody>
+                  </table>
+                </div>
+                <button class="add-row-btn" onclick="addWPRow()">＋ 新增工作點</button>
+                <div style="margin-top:12px;text-align:right;"><button class="btn btn-success" style="padding:9px 20px;font-size:13px;" onclick="saveWPConfig()">💾 儲存並同步雲端</button></div>
+              </div>
+            </div>
+
+            <div id="adminTab-cols" style="display:none;">
+              <div style="margin-bottom:14px;"><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">欄位管理</h3></div>
+              <div class="col-mgmt-toolbar">
+                <input class="col-search" type="text" placeholder="🔍 搜尋欄位名稱…" oninput="filterColTable(this.value)" id="colSearchInput"/>
+                <button class="btn btn-indigo" style="padding:8px 14px;font-size:12px;" onclick="toggleNewColForm()">＋ 新增欄位</button>
+                <button class="btn btn-secondary" style="padding:8px 14px;font-size:12px;" onclick="enableAllCols()">全部啟用</button>
+                <button class="btn btn-secondary" style="padding:8px 14px;font-size:12px;" onclick="disableAllCols()">全部停用</button>
+              </div>
+              <div class="new-col-form" id="newColForm">
+                <h4>➕ 新增自訂欄位</h4>
+                <div class="new-col-grid">
+                  <div class="form-group"><label>欄位名稱 <span class="req">*</span></label><input type="text" id="newColLabel" placeholder="例：站台12" style="font-size:13px;padding:8px 12px;"/></div>
+                  <div class="form-group"><label>欄位代號 <span class="req">*</span></label><input type="text" id="newColKey" placeholder="例：st12" style="font-size:13px;padding:8px 12px;" oninput="this.value=this.value.replace(/[^a-zA-Z0-9_]/g,'')"/></div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:12px;">
+                  <button class="btn btn-indigo" style="flex:1;padding:9px;" onclick="addNewCol()">確認新增</button>
+                  <button class="btn btn-secondary" style="flex:1;padding:9px;" onclick="toggleNewColForm()">取消</button>
+                </div>
+                <div class="val-msg" id="newColError" style="margin-top:6px;"></div>
+              </div>
+              <div class="col-table-wrap">
+                <table class="col-tbl"><thead><tr><th style="width:28px;"></th><th>欄位名稱</th><th style="width:110px;">代號</th><th style="width:60px;text-align:center;">顯示</th><th style="width:70px;text-align:center;">操作</th></tr></thead>
+                <tbody id="colMgmtTbody"></tbody></table>
+              </div>
+              <div class="admin-actions">
+                <button class="btn btn-indigo" onclick="saveColSettings()">💾 儲存並同步雲端</button>
+                <button class="btn btn-secondary" onclick="resetColSettings()">↩ 還原預設</button>
+              </div>
+            </div>
+
+            <div id="adminTab-export" style="display:none;">
+              <div style="margin-bottom:16px;"><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">資料匯出</h3></div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <button class="btn btn-excel" onclick="exportCurrentExcel()" style="padding:14px;font-size:14px;">📥 匯出目前盤點資料（Excel）</button>
+                <button class="btn btn-orange" onclick="exportMergedAllUnits()" style="padding:14px;font-size:14px;">📊 彙整所有單位盤點（Excel）</button>
+                <button class="btn btn-primary" onclick="exportAllHistorySummary()" style="padding:14px;font-size:14px;">📋 匯出全部歷史摘要（Excel）</button>
+                <button class="btn btn-secondary" onclick="exportDrugList()" style="padding:14px;font-size:14px;">📋 匯出藥品清單範本</button>
+              </div>
+            </div>
+
+            <div id="adminTab-audit" style="display:none;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <div><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">操作日誌</h3><p style="font-size:12px;color:var(--slate-400);margin-top:2px;">最近 200 筆</p></div>
+                <button class="btn btn-danger" style="flex:none;padding:8px 14px;font-size:12px;" id="clearAuditBtn" onclick="clearAuditLog()">🗑️ 清除日誌</button>
+              </div>
+              <div style="border:1px solid var(--slate-200);border-radius:var(--radius-sm);overflow:hidden;max-height:400px;overflow-y:auto;">
+                <div id="auditLogContainer"></div>
+              </div>
+            </div>
+
+            <div id="adminTab-security" style="display:none;">
+              <div style="margin-bottom:16px;"><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">安全設定</h3></div>
+              <div class="perm-info-grid">
+                <div class="perm-info-card superadmin-card"><h4>👑 超級管理員</h4><ul class="perm-list"><li>查看盤點紀錄</li><li>修改藥品清單</li><li>標題班別設定</li><li>工作點設定</li><li>欄位管理</li><li>匯出資料</li><li>查看操作日誌</li><li>修改所有密碼</li><li>刪除紀錄</li></ul></div>
+                <div class="perm-info-card admin-card"><h4>🔧 管理員</h4><ul class="perm-list"><li>查看盤點紀錄</li><li>修改藥品清單</li><li>標題班別設定</li><li>工作點設定</li><li>欄位管理</li><li>匯出資料</li><li class="denied">查看操作日誌</li><li>修改自己密碼</li><li class="denied">刪除紀錄</li></ul></div>
+                <div class="perm-info-card viewer-card"><h4>👁 檢視員</h4><ul class="perm-list"><li>查看盤點紀錄</li><li class="denied">修改任何設定</li><li>匯出資料</li><li class="denied">查看操作日誌</li><li class="denied">修改密碼</li><li class="denied">刪除紀錄</li></ul></div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+                <div><h4 style="font-size:13px;font-weight:700;color:var(--amber-700);margin-bottom:10px;">👑 超級管理員密碼</h4><div class="pin-change-form" style="max-width:100%;"><div class="form-group"><label>目前密碼</label><input type="password" id="oldPinSuperadmin" maxlength="6"/></div><div class="form-group"><label>新密碼</label><input type="password" id="newPinSuperadmin" maxlength="6"/></div><div class="form-group"><label>確認新密碼</label><input type="password" id="confirmPinSuperadmin" maxlength="6"/></div><button class="btn btn-amber" style="width:100%;" onclick="changePin('superadmin')">更新</button><div class="pin-error" id="pinErrSuperadmin"></div></div></div>
+                <div><h4 style="font-size:13px;font-weight:700;color:var(--blue-700);margin-bottom:10px;">🔧 管理員密碼</h4><div class="pin-change-form" style="max-width:100%;"><div class="form-group"><label>目前密碼</label><input type="password" id="oldPinAdmin" maxlength="6"/></div><div class="form-group"><label>新密碼</label><input type="password" id="newPinAdmin" maxlength="6"/></div><div class="form-group"><label>確認新密碼</label><input type="password" id="confirmPinAdmin" maxlength="6"/></div><button class="btn btn-indigo" style="width:100%;" onclick="changePin('admin')">更新</button><div class="pin-error" id="pinErrAdmin"></div></div></div>
+                <div><h4 style="font-size:13px;font-weight:700;color:var(--teal-700);margin-bottom:10px;">👁 檢視員密碼</h4><div class="pin-change-form" style="max-width:100%;"><div class="form-group"><label>目前密碼</label><input type="password" id="oldPinViewer" maxlength="6"/></div><div class="form-group"><label>新密碼</label><input type="password" id="newPinViewer" maxlength="6"/></div><div class="form-group"><label>確認新密碼</label><input type="password" id="confirmPinViewer" maxlength="6"/></div><button class="btn btn-success" style="width:100%;" onclick="changePin('viewer')">更新</button><div class="pin-error" id="pinErrViewer"></div></div></div>
+              </div>
+            </div>
+
+            <div id="adminTab-cloud" style="display:none;">
+              <div style="margin-bottom:16px;"><h3 style="font-size:15px;font-weight:700;color:var(--slate-800);">☁️ Google Sheets 雲端同步設定</h3><p style="font-size:12px;color:var(--slate-400);margin-top:2px;">設定後，所有資料（藥品、設定、紀錄）可在多台電腦間雙向同步</p></div>
+
+              <!-- ★ 新增：預設 GAS URL 說明 -->
+              <div style="padding:12px 14px;background:var(--blue-50);border:1.5px solid var(--blue-200);border-radius:var(--radius-sm);margin-bottom:14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--blue-700);margin-bottom:6px;">💡 跨裝置使用說明</div>
+                <div style="font-size:11px;color:var(--slate-600);line-height:1.9;">
+                  在下方「預設 GAS 網址」欄位填入網址並儲存後，<strong>此 HTML 檔案本身</strong>就會記住該網址。<br>
+                  把修改後的 HTML 複製到其他電腦，所有裝置便能自動同步，<strong>不需要每台各自設定</strong>。<br>
+                  （localStorage 只對當前電腦有效；預設值直接寫在程式碼中，隨檔案一起帶走）
+                </div>
+              </div>
+
+              <div class="cloud-config-box">
+                <h4>🔗 Google Apps Script 網址</h4>
+                <div style="font-size:11px;color:var(--slate-500);margin-bottom:8px;">
+                  目前有效網址：<code id="currentGasUrlDisplay" style="font-family:var(--font-mono);font-size:10px;background:var(--slate-100);padding:2px 6px;border-radius:4px;word-break:break-all;"></code>
+                </div>
+                <input class="cloud-url-input" type="text" id="gasUrlInput" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"/>
+                <div class="cloud-test-row">
+                  <button class="btn btn-primary" style="flex:1;padding:8px 14px;font-size:12px;" onclick="saveGasUrl()">💾 儲存網址</button>
+                  <button class="btn btn-secondary" style="flex:1;padding:8px 14px;font-size:12px;" onclick="testGasConnection()">🔌 測試連線</button>
+                  <button class="btn btn-danger" style="padding:8px 14px;font-size:12px;flex:none;" onclick="clearGasUrl()">✕ 清除</button>
+                </div>
+                <div id="gasTestResult" style="margin-top:8px;font-size:12px;display:none;padding:8px 12px;border-radius:6px;"></div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                <div style="padding:14px;border:1.5px solid var(--blue-200);border-radius:10px;background:var(--blue-50);">
+                  <div style="font-size:12px;font-weight:700;color:var(--blue-700);margin-bottom:10px;">⬆️ 推送至雲端</div>
+                  <div style="display:flex;flex-direction:column;gap:8px;">
+                    <button class="btn btn-primary" style="padding:8px;font-size:12px;" onclick="pushToCloud('drugs')">推送 藥品清單</button>
+                    <button class="btn btn-primary" style="padding:8px;font-size:12px;" onclick="pushToCloud('config')">推送 系統設定</button>
+                    <button class="btn btn-primary" style="padding:8px;font-size:12px;" onclick="pushToCloud('shifts')">推送 班別設定</button>
+                    <button class="btn btn-primary" style="padding:8px;font-size:12px;" onclick="pushToCloud('personnel')">推送 人員設定</button>
+                    <button class="btn btn-primary" style="padding:8px;font-size:12px;" onclick="pushToCloud('workpoints')">推送 工作點設定</button>
+                    <button class="btn btn-primary" style="padding:8px;font-size:12px;" onclick="pushToCloud('columns')">推送 欄位設定</button>
+                    <button class="btn btn-primary" style="padding:8px;font-size:12px;" onclick="pushToCloud('locDrug')">推送 位置藥品對應</button>
+                    <button class="btn btn-success" style="padding:10px;font-size:13px;font-weight:700;" onclick="pushAllToCloud()">🚀 一鍵推送全部設定</button>
+                  </div>
+                </div>
+                <div style="padding:14px;border:1.5px solid var(--teal-400);border-radius:10px;background:#f0fdfa;">
+                  <div style="font-size:12px;font-weight:700;color:var(--teal-700);margin-bottom:10px;">⬇️ 從雲端拉取</div>
+                  <div style="display:flex;flex-direction:column;gap:8px;">
+                    <button class="btn btn-success" style="padding:8px;font-size:12px;" onclick="pullFromCloud('drugs')">拉取 藥品清單</button>
+                    <button class="btn btn-success" style="padding:8px;font-size:12px;" onclick="pullFromCloud('config')">拉取 系統設定</button>
+                    <button class="btn btn-success" style="padding:8px;font-size:12px;" onclick="pullFromCloud('shifts')">拉取 班別設定</button>
+                    <button class="btn btn-success" style="padding:8px;font-size:12px;" onclick="pullFromCloud('personnel')">拉取 人員設定</button>
+                    <button class="btn btn-success" style="padding:8px;font-size:12px;" onclick="pullFromCloud('workpoints')">拉取 工作點設定</button>
+                    <button class="btn btn-success" style="padding:8px;font-size:12px;" onclick="pullFromCloud('columns')">拉取 欄位設定</button>
+                    <button class="btn btn-success" style="padding:8px;font-size:12px;" onclick="pullFromCloud('locDrug')">拉取 位置藥品對應</button>
+                    <button class="btn btn-success" style="padding:10px;font-size:13px;font-weight:700;" onclick="pullAllFromCloud()">⬇️ 一鍵拉取全部設定</button>
+                  </div>
+                </div>
+              </div>
+              <div id="cloudOpStatus" style="font-size:12px;color:var(--slate-500);padding:8px;display:none;background:var(--slate-50);border:1px solid var(--slate-200);border-radius:6px;"></div>
+
+              <div style="padding:16px;background:#fffbeb;border:1.5px solid var(--amber-400);border-radius:var(--radius-sm);margin-bottom:16px;">
+                <div style="font-size:13px;font-weight:700;color:var(--amber-700);margin-bottom:8px;">📋 GAS 設定步驟</div>
+                <ol style="font-size:12px;color:var(--slate-600);line-height:2.2;padding-left:18px;">
+                  <li>開啟 <strong>Google 雲端硬碟</strong>，建立一份新的 <strong>Google Sheets</strong> 試算表</li>
+                  <li>點選 <strong>「擴充功能」→「Apps Script」</strong></li>
+                  <li>刪除預設程式碼，<strong>貼上下載的 google_apps_script.js 內容</strong></li>
+                  <li>在 GAS 編輯器中，執行 <strong>setup()</strong> 函數一次（初始化工作表）</li>
+                  <li>點選 <strong>「部署」→「新增部署作業」</strong>，類型選「網頁應用程式」</li>
+                  <li>執行身分選「我」，存取權選<strong>「任何人」</strong>，點「部署」</li>
+                  <li>複製產生的 <strong>網頁應用程式 URL</strong>，貼到上方欄位並儲存</li>
+                  <li>點「一鍵推送全部設定」，然後把這個 <strong>HTML 檔案另存一份</strong>（GAS URL 已寫入）</li>
+                  <li>其他電腦直接開啟該 HTML 檔案，即可自動連線雲端</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="recordDetailOverlay" class="record-detail-overlay">
+  <div class="record-detail-modal">
+    <div class="record-detail-header"><h3 id="recordDetailTitle">盤點紀錄詳情</h3><button class="admin-close" onclick="closeRecordDetail()">✕</button></div>
+    <div class="record-detail-body" id="recordDetailBody"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  ★ 修正1：GAS URL 硬編碼預設值
+//  將您的 GAS 網址填入下方 DEFAULT_GAS_URL
+//  這樣複製 HTML 到任何電腦都能自動帶入
+// ═══════════════════════════════════════════════════
+const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbz6w8zZ5tbqt0Mjpm1BpmEA5BesFRtYozO78-V3rDD4J733686jDu0fjfoQ3cftR2Ip/exec';
+
+// ═══════════════════════════════════════════════════
+//  SITE CONFIG
+// ═══════════════════════════════════════════════════
+let SITE_CONFIG = {
+  hospitalBadge: '佛教慈濟醫療財團法人台中慈濟醫院',
+  titlePrefix:   '藥劑科 ',
+  titleEm:       '四級管制藥品',
+  titleSuffix:   ' 總盤點表',
+  subtitle:      '管四總盤點一 + 特別關懷 20191206 ─ v5.1（雲端全同步版）',
+};
+
+let SHIFTS = [
+  {val:'大夜',   icon:'🌙', time:'0:00–01:20'},
+  {val:'早班',   icon:'🌅', time:'08:00–'},
+  {val:'小夜',   icon:'🌆', time:'16:00–'},
+  {val:'假日大夜',icon:'🎌', time:'週六/日'},
+];
+
+let PERSONNEL_LIST = [
+  {val:'週日', icon:'🌞', title:'盤點人員（週日）', desc:'大夜謄寫：藥包機3(B1F)、主管(B1F)、UD、9、11、4　大夜盤：庫存區\n大夜謄寫：藥包機2、2、8、6　大夜(0:00~01:20)：7、5、3\n大夜謄寫：主管(1F)　大夜(0:00~01:20)：1、藥包機1'},
+  {val:'週六', icon:'🌤', title:'盤點人員（週六）', desc:'大夜謄寫：藥包機3(B1F)、主管(B1F)、UD、9、11、4　大夜盤：庫存區\n大夜謄寫：藥包機2、2　E9：8　D9：6　大夜(0:00~01:20)：7、5、3\n大夜謄寫：主管(1F)　大夜(0:00~01:20)：1、藥包機1'},
+  {val:'週間', icon:'📋', title:'盤點人員（週間）', desc:'C8：藥包機3(B1F)、主管(B1F)、UD、9、11、4、庫存區\nF1：藥包機2、2　E9(五C8)：8　D9：6　大夜(0:00~01:20)：7、5、3\nC0：主管(1F)　大夜(0:00~01:20)：1、藥包機1'},
+];
+
+let WORKPOINT_MAP = {
+  '週日_大夜謄寫':   {label:'大夜謄寫',        locs:['藥包機3(B1F)','主管(B1F)','UD','9','11','4'],  colKeys:['packing3','manager_b1f','ud','st9','st11','st4']},
+  '週日_大夜盤':     {label:'大夜盤',           locs:['庫存區'],                                       colKeys:['storage']},
+  '週日_大夜謄寫2':  {label:'大夜謄寫(2)',      locs:['藥包機2','2','8','6'],                          colKeys:['packing2','st2','st8','st6']},
+  '週日_大夜0020':   {label:'大夜(0:00~01:20)', locs:['7','5','3'],                                    colKeys:['st7','st5','st3']},
+  '週日_大夜謄寫3':  {label:'大夜謄寫(3)',      locs:['主管(1F)'],                                     colKeys:['manager_1f']},
+  '週日_大夜0020_2': {label:'大夜(0:00~01:20)(2)',locs:['1','藥包機1'],                               colKeys:['st1','packing1']},
+  '週六_大夜謄寫':   {label:'大夜謄寫',         locs:['藥包機3(B1F)','主管(B1F)','UD','9','11','4'],   colKeys:['packing3','manager_b1f','ud','st9','st11','st4']},
+  '週六_大夜盤':     {label:'大夜盤',           locs:['庫存區'],                                       colKeys:['storage']},
+  '週六_大夜謄寫2':  {label:'大夜謄寫(2)',      locs:['藥包機2','2'],                                  colKeys:['packing2','st2']},
+  '週六_E9':         {label:'E9',              locs:['8'],                                            colKeys:['st8']},
+  '週六_D9':         {label:'D9',              locs:['6'],                                            colKeys:['st6']},
+  '週六_大夜0020':   {label:'大夜(0:00~01:20)',locs:['7','5','3'],                                     colKeys:['st7','st5','st3']},
+  '週六_大夜謄寫3':  {label:'大夜謄寫(3)',     locs:['主管(1F)'],                                      colKeys:['manager_1f']},
+  '週六_大夜0020_2': {label:'大夜(0:00~01:20)(2)',locs:['1','藥包機1'],                              colKeys:['st1','packing1']},
+  '週間_C8':         {label:'C8',             locs:['藥包機3(B1F)','主管(B1F)','UD','9','11','4','庫存區'], colKeys:['packing3','manager_b1f','ud','st9','st11','st4','storage']},
+  '週間_F1':         {label:'F1',             locs:['藥包機2','2'],                                   colKeys:['packing2','st2']},
+  '週間_E9':         {label:'E9(五C8)',        locs:['8'],                                            colKeys:['st8']},
+  '週間_D9':         {label:'D9',             locs:['6'],                                            colKeys:['st6']},
+  '週間_大夜0020':   {label:'大夜(0:00~01:20)',locs:['7','5','3'],                                    colKeys:['st7','st5','st3']},
+  '週間_C0':         {label:'C0',             locs:['主管(1F)'],                                     colKeys:['manager_1f']},
+  '週間_大夜0020_2': {label:'大夜(0:00~01:20)(2)',locs:['1','藥包機1'],                             colKeys:['st1','packing1']},
+};
+
+let PERSONNEL_WORKPOINTS = {
+  '週日': ['週日_大夜謄寫','週日_大夜盤','週日_大夜謄寫2','週日_大夜0020','週日_大夜謄寫3','週日_大夜0020_2'],
+  '週六': ['週六_大夜謄寫','週六_大夜盤','週六_大夜謄寫2','週六_E9','週六_D9','週六_大夜0020','週六_大夜謄寫3','週六_大夜0020_2'],
+  '週間': ['週間_C8','週間_F1','週間_E9','週間_D9','週間_大夜0020','週間_C0','週間_大夜0020_2'],
+};
+
+let DRUGS = [
+  {no:1,  loc:'301 F101', name:'Alprazolam XR 0.5mg/tab(Xanax XR)',  brand:'Xanax XR'},
+  {no:2,  loc:'F102',     name:'Oxazolam 10mg/tab(Secorin S.C)',      brand:'Secorin S.C'},
+  {no:3,  loc:'F103',     name:'Zolpidem 10mg/tab(Stilnox)',          brand:'Stilnox'},
+  {no:4,  loc:'306 F104', name:'Lorazepam 口服 0.5mg/tab(Anxiedin)',  brand:'Anxiedin'},
+  {no:5,  loc:'F105',     name:'Bromazepam 3mg/tab(Bromazin)',        brand:'Bromazin'},
+  {no:6,  loc:'304 F106', name:'Fludiazepam 0.25mg/tab(Flupine)',     brand:'Flupine'},
+  {no:7,  loc:'F107',     name:'ZOPICLONE 7.5mg/tab(Zolon)',          brand:'Zolon'},
+  {no:8,  loc:'308 F109', name:'Estazolam 2mg/tab(Eurodin)',          brand:'Eurodin'},
+  {no:9,  loc:'F110',     name:'Lorazepam 錠劑(大) 2mg/tab(Anxicam)', brand:'Anxicam'},
+  {no:10, loc:'303 F111', name:'Clonazepam 0.5mg/tab(Rivotril)',      brand:'Rivotril'},
+  {no:11, loc:'302 F112', name:'Tramacet 37.5mg&325mg/tab',           brand:''},
+  {no:12, loc:'M102',     name:'Clobazam 10mg/tab(Frisium)',          brand:'Frisium'},
+  {no:13, loc:'M103',     name:'Rivotril (大) 2mg(Clonazepam)',       brand:'Clonazepam'},
+  {no:14, loc:'M104',     name:'Diazepam錠劑 5mg/tab(Dupin)',         brand:'Dupin'},
+  {no:15, loc:'M111',     name:'Tramadol口服 100mg/tab(Muaction)',     brand:'Muaction'},
+  {no:16, loc:'M112',     name:'Nitrazepam 5mg/tab(Limin)',           brand:'Limin'},
+];
+
+const DEFAULT_COLS = [
+  {key:'packing3',   label:'藥包機3(B1F)', enabled:true},
+  {key:'manager_b1f',label:'主管(B1F)',    enabled:true},
+  {key:'ud',         label:'UD',           enabled:true},
+  {key:'st9',        label:'站台9',        enabled:true},
+  {key:'st11',       label:'站台11',       enabled:true},
+  {key:'st4',        label:'站台4',        enabled:true},
+  {key:'storage',    label:'庫存區',       enabled:true},
+  {key:'packing2',   label:'藥包機2',      enabled:true},
+  {key:'st2',        label:'站台2',        enabled:true},
+  {key:'st8',        label:'站台8',        enabled:true},
+  {key:'st6',        label:'站台6',        enabled:true},
+  {key:'st7',        label:'站台7',        enabled:true},
+  {key:'st5',        label:'站台5',        enabled:true},
+  {key:'st3',        label:'站台3',        enabled:true},
+  {key:'manager_1f', label:'主管(1F)',     enabled:true},
+  {key:'st1',        label:'站台1',        enabled:true},
+  {key:'packing1',   label:'藥包機1',      enabled:true},
+  {key:'defect',     label:'不良品',       enabled:true, fixed:true},
+];
+let ALL_COLS = JSON.parse(JSON.stringify(DEFAULT_COLS));
+
+let LOCATION_DRUG_MAP = {};
+let HISTORY = [];
+let AUDIT_LOG = [];
+
+// ═══════════════════════════════════════════════════
+//  ★ 修正1：GAS URL 優先順序
+//  1. localStorage（使用者在當前電腦手動設定）
+//  2. DEFAULT_GAS_URL（硬編碼在檔案中，跨裝置共享）
+// ═══════════════════════════════════════════════════
+let GAS_URL = localStorage.getItem('gasUrl') || DEFAULT_GAS_URL;
+
+// ═══════════════════════════════════════════════════
+//  CLOUD SYNC ENGINE
+// ═══════════════════════════════════════════════════
+function setCloudBanner(status, text, actionLabel) {
+  const banner = document.getElementById('cloudSyncBanner');
+  const textEl = document.getElementById('csbText');
+  const actionEl = document.getElementById('csbAction');
+  banner.className = `cloud-sync-banner ${status}`;
+  textEl.textContent = text;
+  if (actionLabel !== undefined) {
+    actionEl.style.display = actionLabel ? '' : 'none';
+    actionEl.textContent = actionLabel;
+  }
+}
+
+function triggerCloudAction() {
+  if (!GAS_URL) { openAdminPin(); return; }
+  pullAllFromCloud();
+}
+
+async function gasGet(action) {
+  if (!GAS_URL) throw new Error('GAS URL 未設定');
+  const url = GAS_URL + '?action=' + encodeURIComponent(action) + '&_t=' + Date.now();
+  const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
+  const json = await resp.json();
+  if (json.status !== 'ok') throw new Error(json.message || '伺服器回傳錯誤');
+  return json;
+}
+
+async function gasPost(payload) {
+  if (!GAS_URL) throw new Error('GAS URL 未設定');
+  await fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15000)
+  });
+  return true;
+}
+
+// ═══════════════════════════════════════════════════
+//  ★ 修正2：applyCloudData — 嚴格驗證，空資料不覆蓋本機
+// ═══════════════════════════════════════════════════
+function applyCloudData(data) {
+  let changed = [];
+
+  // 藥品清單：至少要有1筆才覆蓋
+  if (data.drugs && Array.isArray(data.drugs) && data.drugs.length > 0) {
+    DRUGS = data.drugs; changed.push('藥品清單');
+  }
+  // 系統設定：至少要有1個有效欄位才覆蓋
+  if (data.config && typeof data.config === 'object' && Object.keys(data.config).length > 0) {
+    Object.assign(SITE_CONFIG, data.config); applySiteConfig(); changed.push('系統設定');
+  }
+  // 班別：至少要有1筆才覆蓋
+  if (data.shifts && Array.isArray(data.shifts) && data.shifts.length > 0) {
+    SHIFTS = data.shifts; renderShiftButtons(); changed.push('班別');
+  }
+  // 人員類別：至少要有1筆才覆蓋
+  if (data.personnel && Array.isArray(data.personnel) && data.personnel.length > 0) {
+    PERSONNEL_LIST = data.personnel; renderPersonnelButtons(); changed.push('人員類別');
+  }
+  // ★ 工作點：map 必須有至少1個 key 才覆蓋（防止空物件蓋掉預設）
+  if (data.workpoints) {
+    const wMap = data.workpoints.map || data.workpoints;
+    const wPersonnel = data.workpoints.personnel;
+    if (wMap && typeof wMap === 'object' && Object.keys(wMap).length > 0) {
+      WORKPOINT_MAP = wMap;
+      if (wPersonnel && typeof wPersonnel === 'object' && Object.keys(wPersonnel).length > 0) {
+        PERSONNEL_WORKPOINTS = wPersonnel;
+      }
+      changed.push('工作點');
+    }
+  }
+  // 欄位設定：至少要有1筆才覆蓋
+  if (data.columns && Array.isArray(data.columns) && data.columns.length > 0) {
+    ALL_COLS = data.columns; changed.push('欄位');
+  }
+  // 位置藥品對應：是物件且有 key 才覆蓋
+  if (data.locDrug && typeof data.locDrug === 'object' && Object.keys(data.locDrug).length > 0) {
+    LOCATION_DRUG_MAP = data.locDrug; changed.push('位置藥品對應');
+  }
+  // 盤點紀錄：合併（只加入不存在的）
+  if (data.records && Array.isArray(data.records)) {
+    const existing = new Set(HISTORY.map(r => String(r.id)));
+    let added = 0;
+    data.records.forEach(r => { if (!existing.has(String(r.id))) { HISTORY.push(r); added++; } });
+    if (added) changed.push(`紀錄(+${added})`);
+  }
+  return changed;
+}
+
+async function pullFromCloud(type) {
+  if (!GAS_URL) { alert('請先設定 GAS 網址'); return; }
+  setCloudOpStatus(`🔄 拉取「${type}」中…`);
+  try {
+    const actionMap = {
+      drugs:'getDrugs', config:'getConfig', shifts:'getShifts',
+      personnel:'getPersonnel', workpoints:'getWorkpoints',
+      columns:'getColumns', locDrug:'getLocDrug', records:'getRecords'
+    };
+    const json = await gasGet(actionMap[type] || type);
+    const data = {};
+    data[type] = json[type] || json.data;
+    const changed = applyCloudData(data);
+    setCloudOpStatus(`✅ 已拉取：${changed.join('、') || '無更新（雲端資料為空，保留本機設定）'}`);
+    setCloudBanner('success', `☁️ 已從雲端同步：${changed.join('、') || '（雲端無資料）'}`, '再次同步');
+  } catch(e) {
+    setCloudOpStatus(`❌ 拉取失敗：${e.message}`);
+    setCloudBanner('error', `☁️ 拉取失敗：${e.message}`, '重試');
+  }
+}
+
+async function pullAllFromCloud() {
+  if (!GAS_URL) { alert('請先設定 GAS 網址'); return; }
+  setCloudBanner('loading', '☁️ 正在從雲端拉取所有設定…', null);
+  setCloudOpStatus('🔄 拉取所有設定中…');
+  try {
+    const json = await gasGet('getAll');
+    const changed = applyCloudData(json.data || json);
+    const msg = changed.length ? `已同步：${changed.join('、')}` : '雲端無資料，保留本機設定';
+    setCloudBanner('success', `☁️ ${msg}　上次同步：${new Date().toLocaleTimeString('zh-TW')}`, '再次同步');
+    setCloudOpStatus(`✅ ${msg}`);
+    addAudit('從雲端拉取全部設定');
+    if (document.getElementById('adminContent').style.display !== 'none') {
+      renderAdminDrugs(); renderColMgmtTable(); renderHistory(); refreshLocationFilter();
+      renderSiteConfigEditor(); renderShiftEditor(); renderPersonnelEditor();
+    }
+  } catch(e) {
+    setCloudBanner('warning', `☁️ 雲端連線失敗，使用本機資料（${e.message}）`, '重試');
+    setCloudOpStatus(`⚠️ 連線失敗：${e.message}　已使用本機預設資料`);
+  }
+}
+
+async function pushToCloud(type) {
+  if (!GAS_URL) { alert('請先設定 GAS 網址'); return; }
+  setCloudOpStatus(`⬆️ 推送「${type}」至雲端…`);
+  const payloads = {
+    drugs:      { action:'saveDrugs',     drugs: DRUGS },
+    config:     { action:'saveConfig',    config: SITE_CONFIG },
+    shifts:     { action:'saveShifts',    shifts: SHIFTS },
+    personnel:  { action:'savePersonnel', personnel: PERSONNEL_LIST },
+    workpoints: { action:'saveWorkpoints',workpoints: WORKPOINT_MAP, personnelWorkpoints: PERSONNEL_WORKPOINTS },
+    columns:    { action:'saveColumns',   columns: ALL_COLS },
+    locDrug:    { action:'saveLocDrug',   locDrug: LOCATION_DRUG_MAP },
+  };
+  const payload = payloads[type];
+  if (!payload) { setCloudOpStatus('❌ 未知類型：' + type); return; }
+  try {
+    await gasPost(payload);
+    setCloudOpStatus(`✅ 已推送「${type}」到雲端`);
+    setCloudBanner('success', `☁️ 已推送「${type}」至 Google Sheets　${new Date().toLocaleTimeString('zh-TW')}`, '再次同步');
+    addAudit(`推送「${type}」至雲端`);
+  } catch(e) {
+    setCloudOpStatus(`❌ 推送失敗：${e.message}`);
+  }
+}
+
+async function pushAllToCloud() {
+  if (!GAS_URL) { alert('請先設定 GAS 網址'); return; }
+  setCloudBanner('loading', '☁️ 正在推送全部設定至雲端…', null);
+  setCloudOpStatus('⬆️ 推送全部設定中…');
+  try {
+    await gasPost({
+      action: 'saveAll',
+      drugs: DRUGS, config: SITE_CONFIG, shifts: SHIFTS,
+      personnel: PERSONNEL_LIST, workpoints: WORKPOINT_MAP,
+      personnelWorkpoints: PERSONNEL_WORKPOINTS, columns: ALL_COLS,
+      locDrug: LOCATION_DRUG_MAP,
+    });
+    setCloudBanner('success', `☁️ 全部設定已推送至 Google Sheets　${new Date().toLocaleTimeString('zh-TW')}`, '再次同步');
+    setCloudOpStatus('✅ 全部設定已推送至雲端');
+    addAudit('推送全部設定至雲端');
+    alert('✅ 全部設定已推送至 Google Sheets！\n其他電腦開啟此 HTML 檔案後即可自動同步。');
+  } catch(e) {
+    setCloudBanner('error', `☁️ 推送失敗：${e.message}`, '重試');
+    setCloudOpStatus('❌ 推送失敗：' + e.message);
+  }
+}
+
+async function syncRecordToCloud(record) {
+  if (!GAS_URL) return false;
+  try {
+    await gasPost({
+      action: 'addRecord',
+      record: {
+        id: record.id, date: record.date, shift: record.shift,
+        personnel: record.personnel, workpoint: record.workpoint,
+        wpLabel: record.wpLabel || record.workpoint, location: record.location,
+        pharmacist: record.pharmacist, supervisor: record.supervisor || '',
+        remark: record.remark || '', done: record.done, total: record.total,
+        diffCount: record.diffCount, data: record.data || []
+      }
+    });
+    return true;
+  } catch(e) { return false; }
+}
+
+async function adminPullAllFromCloud() {
+  await pullAllFromCloud();
+  renderHistory(); refreshLocationFilter();
+}
+
+function setCloudOpStatus(msg) {
+  const el = document.getElementById('cloudOpStatus');
+  if (el) { el.style.display = 'block'; el.textContent = msg; }
+}
+
+// ═══════════════════════════════════════════════════
+//  ★ 修正1：GAS URL 設定 UI
+//  saveGasUrl 不再自動觸發 pullAllFromCloud
+//  讓使用者可以先設定 URL，再手動決定要推送還是拉取
+// ═══════════════════════════════════════════════════
+function saveGasUrl() {
+  const url = document.getElementById('gasUrlInput').value.trim();
+  if (!url) { alert('請輸入 GAS 網址'); return; }
+  GAS_URL = url;
+  localStorage.setItem('gasUrl', url);
+  // 更新頁面顯示
+  const display = document.getElementById('currentGasUrlDisplay');
+  if (display) display.textContent = url;
+  showGasTestResult('success', '✅ 網址已儲存到 localStorage。\n⚠️ 注意：若要讓其他裝置自動套用，請把 DEFAULT_GAS_URL 填入並重新儲存 HTML 檔案。');
+  setCloudBanner('idle', '☁️ GAS 網址已設定，可開始同步（點「立即同步」拉取雲端資料）', '立即同步');
+  addAudit('設定 GAS 雲端同步網址');
+  // ★ 不再自動 pull，避免雲端空資料蓋掉本機設定
+}
+
+function clearGasUrl() {
+  if (!confirm('確定清除雲端設定？')) return;
+  GAS_URL = DEFAULT_GAS_URL || '';
+  localStorage.removeItem('gasUrl');
+  document.getElementById('gasUrlInput').value = '';
+  const display = document.getElementById('currentGasUrlDisplay');
+  if (display) display.textContent = DEFAULT_GAS_URL || '（未設定）';
+  showGasTestResult('info', '已清除 localStorage 中的 GAS 網址');
+  setCloudBanner('idle', GAS_URL ? '☁️ 已恢復使用預設 GAS 網址' : '☁️ 雲端同步：尚未設定 GAS 網址', GAS_URL ? '同步' : '設定');
+}
+
+async function testGasConnection() {
+  const url = document.getElementById('gasUrlInput').value.trim() || GAS_URL;
+  if (!url) { showGasTestResult('error', '請先輸入 GAS 網址'); return; }
+  showGasTestResult('info', '🔄 測試中…');
+  try {
+    const resp = await fetch(url + '?action=ping', {signal: AbortSignal.timeout(10000)});
+    const json = await resp.json();
+    if (json.status === 'ok') showGasTestResult('success', '✅ 連線成功！' + (json.message || ''));
+    else showGasTestResult('error', '⚠️ 回應異常：' + JSON.stringify(json).slice(0,80));
+  } catch(e) { showGasTestResult('error', '❌ 連線失敗：' + e.message); }
+}
+
+function showGasTestResult(type, msg) {
+  const el = document.getElementById('gasTestResult');
+  el.style.display = 'block';
+  const s = {
+    success:'background:#f0fdfa;color:#0d9488;border:1px solid #5eead4;',
+    error:'background:#fef2f2;color:#dc2626;border:1px solid #fca5a5;',
+    info:'background:#eff6ff;color:#1d4ed8;border:1px solid #93c5fd;'
+  };
+  el.style.cssText = 'margin-top:8px;font-size:12px;display:block;padding:8px 12px;border-radius:6px;white-space:pre-line;'+(s[type]||s.info);
+  el.textContent = msg;
+}
+
+function renderCloudSettings() {
+  const inp = document.getElementById('gasUrlInput');
+  if (inp) inp.value = GAS_URL || '';
+  const display = document.getElementById('currentGasUrlDisplay');
+  if (display) display.textContent = GAS_URL || '（未設定）';
+}
+
+// ═══════════════════════════════════════════════════
+//  SECURITY
+// ═══════════════════════════════════════════════════
+const PINS = {superadmin:'1234', admin:'5678', viewer:'9999'};
+let loginAttempts=0, lockoutUntil=0, currentRole=null, selectedLoginRole='superadmin';
+let sessionStart=null, sessionTimer=null;
+const SESSION_MINUTES=30;
+const ROLE_PERMISSIONS = {
+  superadmin:{history:true,drugs:true,'location-drugs':true,siteconfig:true,wpconfig:true,cols:true,export:true,audit:true,security:true,cloud:true,deleteRecords:true},
+  admin:      {history:true,drugs:true,'location-drugs':true,siteconfig:true,wpconfig:true,cols:true,export:true,audit:false,security:true,cloud:true,deleteRecords:false},
+  viewer:     {history:true,drugs:false,'location-drugs':false,siteconfig:false,wpconfig:false,cols:false,export:true,audit:false,security:false,cloud:false,deleteRecords:false},
+};
+function can(p){return currentRole&&ROLE_PERMISSIONS[currentRole]?.[p];}
+function addAudit(action){
+  AUDIT_LOG.unshift({ts:new Date().toISOString(),role:currentRole||'system',action});
+  if(AUDIT_LOG.length>200)AUDIT_LOG.length=200;
+  if(GAS_URL && currentRole) gasPost({action:'addLog', role:currentRole, action_text:action}).catch(()=>{});
+}
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let inventoryStarted=false;
+let state={shift:'',personnel:'',workpoint:'',location:'',activeCols:[],activeColKey:'',data:[],completedCount:0};
+let colSearchQuery='';
+
+// ═══════════════════════════════════════════════════
+//  ★ 修正2：INIT — 頁面載入時，只在 GAS_URL 存在且雲端有資料時才同步
+//  雲端連線失敗時靜默降級，保留本機預設值
+// ═══════════════════════════════════════════════════
+document.getElementById('invDate').value = new Date().toISOString().split('T')[0];
+applySiteConfig();
+renderShiftButtons();
+renderPersonnelButtons();
+updatePhaseClickability();
+
+if (GAS_URL) {
+  setCloudBanner('loading', '☁️ 正在從雲端載入最新設定…', null);
+  // 使用 silentPullOnLoad：失敗時不清空本機資料，只顯示警告
+  silentPullOnLoad();
+} else {
+  setCloudBanner('idle', '☁️ 雲端同步：尚未設定 GAS 網址（後台管理 → 雲端設定）', '設定');
+}
+
+// ★ 靜默載入：連線失敗或無資料都不影響本機設定
+async function silentPullOnLoad() {
+  try {
+    const json = await gasGet('getAll');
+    const changed = applyCloudData(json.data || json);
+    if (changed.length) {
+      setCloudBanner('success', `☁️ 已從雲端同步：${changed.join('、')}　${new Date().toLocaleTimeString('zh-TW')}`, '再次同步');
+    } else {
+      setCloudBanner('idle', `☁️ 雲端連線成功（無需更新）　${new Date().toLocaleTimeString('zh-TW')}`, '同步');
+    }
+  } catch(e) {
+    // ★ 連線失敗時：保持本機預設值，只顯示警告，不報錯
+    setCloudBanner('warning', `☁️ 雲端連線失敗，使用本機資料（${e.message}）`, '重試');
+    console.warn('[Cloud] 頁面載入時雲端同步失敗，使用本機資料:', e.message);
+  }
+}
+
+function applySiteConfig(){
+  document.getElementById('hospitalBadge').textContent=SITE_CONFIG.hospitalBadge;
+  const t=document.getElementById('pageMainTitle');
+  t.textContent='';
+  t.appendChild(document.createTextNode(SITE_CONFIG.titlePrefix));
+  const em=document.createElement('em'); em.id='pageTitleEm'; em.textContent=SITE_CONFIG.titleEm;
+  t.appendChild(em);
+  t.appendChild(document.createTextNode(SITE_CONFIG.titleSuffix));
+  document.getElementById('pageSubtitle').textContent=SITE_CONFIG.subtitle;
+}
+
+function renderShiftButtons(){
+  const g=document.getElementById('shiftGroup'); g.innerHTML='';
+  SHIFTS.forEach(s=>{
+    const b=document.createElement('button');
+    b.className='shift-btn'+(state.shift===s.val?' active':'');
+    b.dataset.val=s.val;
+    b.innerHTML=`<span class="shift-icon">${s.icon}</span>${s.val}<span class="shift-time">${s.time}</span>`;
+    b.onclick=()=>selectShift(b);
+    g.appendChild(b);
+  });
+  const fs=document.getElementById('filterShift');
+  if(fs){fs.innerHTML='<option value="">全部</option>';SHIFTS.forEach(s=>{const o=document.createElement('option');o.value=s.val;o.textContent=s.val;fs.appendChild(o);});}
+}
+
+function renderPersonnelButtons(){
+  const g=document.getElementById('personnelGrid'); g.innerHTML='';
+  PERSONNEL_LIST.forEach(p=>{
+    const b=document.createElement('button');
+    b.className='personnel-btn'+(state.personnel===p.val?' active':'');
+    b.dataset.val=p.val;
+    const lines=p.desc.split('\n').map(l=>`<div>${l}</div>`).join('');
+    b.innerHTML=`<span class="p-icon">${p.icon}</span><div><div class="p-title">${p.title}</div><div class="p-cols">${lines}</div></div>`;
+    b.onclick=()=>selectPersonnel(b);
+    g.appendChild(b);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  PHASE NAVIGATION
+// ═══════════════════════════════════════════════════
+function updatePhaseClickability(){
+  document.getElementById('ph1').classList.toggle('clickable',inventoryStarted);
+  document.getElementById('ph2').classList.toggle('clickable',inventoryStarted);
+  document.getElementById('ph3').classList.toggle('clickable',inventoryStarted&&state.data.every(d=>d.done));
+}
+function gotoPhase(n){
+  if(n===1)showInfoSection();
+  else if(n===2&&inventoryStarted)showInventorySection();
+  else if(n===3&&inventoryStarted){showInventorySection();document.getElementById('submitSection').scrollIntoView({behavior:'smooth'});}
+}
+function showInfoSection(){
+  document.getElementById('infoSection').style.display='block';
+  document.getElementById('inventorySection').style.display='none';
+  document.getElementById('ph1').className='phase active'+(inventoryStarted?' clickable':'');
+  document.getElementById('ph2').className='phase'+(inventoryStarted?' done clickable':'');
+  document.getElementById('ph3').className='phase'+(inventoryStarted&&state.data.every(d=>d.done)?' done clickable':'');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showInventorySection(){
+  document.getElementById('infoSection').style.display='none';
+  document.getElementById('inventorySection').style.display='block';
+  document.getElementById('ph1').className='phase done clickable';
+  document.getElementById('ph2').className='phase active clickable';
+  const allDone=state.data.length&&state.data.every(d=>d.done);
+  document.getElementById('ph3').className='phase'+(allDone?' done clickable':'');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════════
+//  STEP 1 LOGIC
+// ═══════════════════════════════════════════════════
+function selectShift(btn){
+  document.querySelectorAll('.shift-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); state.shift=btn.dataset.val;
+  document.getElementById('shiftMsg').classList.remove('show');
+}
+function selectPersonnel(btn){
+  document.querySelectorAll('.personnel-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); state.personnel=btn.dataset.val; state.workpoint=''; state.location='';
+  document.getElementById('personnelMsg').classList.remove('show');
+  renderWorkpointButtons(state.personnel);
+  document.getElementById('workpointCard').style.display='block';
+  document.getElementById('locationCard').style.display='none';
+  document.getElementById('locationSelect').value='';
+  document.getElementById('wpColPreview').style.display='none';
+}
+function renderWorkpointButtons(personnel){
+  const wpKeys=PERSONNEL_WORKPOINTS[personnel]||[];
+  const container=document.getElementById('workpointBtnGroup'); container.innerHTML='';
+  wpKeys.forEach(key=>{
+    const wp=WORKPOINT_MAP[key]; if(!wp) return;
+    const btn=document.createElement('button');
+    btn.className='workpoint-btn'+(state.workpoint===key?' active':'');
+    btn.dataset.key=key;
+    btn.innerHTML=`<div class="wp-label">${wp.label}</div><div class="wp-locs">${wp.locs.join('　')}</div>`;
+    btn.onclick=()=>selectWorkpoint(btn,key);
+    container.appendChild(btn);
+  });
+}
+function selectWorkpoint(btn,key){
+  document.querySelectorAll('.workpoint-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); state.workpoint=key; state.location='';
+  document.getElementById('workpointMsg').classList.remove('show');
+  const wp=WORKPOINT_MAP[key];
+  if(wp&&wp.locs&&wp.locs.length){
+    const chips=document.getElementById('wpColChips'); chips.innerHTML='';
+    wp.locs.forEach((loc,i)=>{
+      const ck=wp.colKeys[i];
+      const col=ALL_COLS.find(c=>c.key===ck);
+      const chip=document.createElement('span');
+      chip.className='wp-col-chip';
+      chip.textContent=loc+(col&&col.label!==loc?` (${col.label})`:'');
+      chips.appendChild(chip);
+    });
+    document.getElementById('wpColPreview').style.display='block';
+  } else {
+    document.getElementById('wpColPreview').style.display='none';
+  }
+  updateLocationDropdown(wp?wp.locs:[]);
+  document.getElementById('locationCard').style.display='block';
+  document.getElementById('locationSelect').value='';
+  document.getElementById('locationMsg').classList.remove('show');
+  document.getElementById('drugPreviewBox').style.display='none';
+}
+function updateLocationDropdown(locs){
+  const sel=document.getElementById('locationSelect');
+  sel.innerHTML='<option value="">── 請選擇盤點位置 ──</option>';
+  locs.forEach(loc=>{const o=document.createElement('option');o.value=loc;o.textContent=loc;sel.appendChild(o);});
+  state.location='';
+}
+function selectLocation(val){
+  state.location=val;
+  document.getElementById('locationMsg').classList.remove('show');
+  if(val){
+    const drugs=getDrugsForLocation(val);
+    document.getElementById('previewCount').textContent=drugs.length;
+    document.getElementById('drugPreviewList').innerHTML=drugs.map((d,i)=>`${i+1}. ${d.name}`).join('<br>');
+    document.getElementById('drugPreviewBox').style.display='block';
+  } else {
+    document.getElementById('drugPreviewBox').style.display='none';
+  }
+}
+function getDrugsForLocation(loc){
+  if(LOCATION_DRUG_MAP[loc]&&LOCATION_DRUG_MAP[loc].length>0)
+    return DRUGS.filter(d=>LOCATION_DRUG_MAP[loc].includes(d.no));
+  return DRUGS;
+}
+function validate(){
+  let ok=true;
+  const show=(id,cond)=>{document.getElementById(id).classList[cond?'add':'remove']('show');if(cond)ok=false;};
+  show('invDateMsg',!document.getElementById('invDate').value);
+  show('shiftMsg',!state.shift);
+  show('personnelMsg',!state.personnel);
+  show('workpointMsg',!state.workpoint);
+  show('locationMsg',!state.location);
+  show('pharmacistMsg',!document.getElementById('pharmacist').value.trim());
+  return ok;
+}
+function startInventory(){
+  if(!validate())return;
+  if(inventoryStarted){syncInfoBar();showInventorySection();return;}
+  inventoryStarted=true;
+  document.getElementById('startBtn').textContent='確認並返回盤點 →';
+  syncInfoBar();
+  const wp=WORKPOINT_MAP[state.workpoint];
+  const wpLocs=wp?wp.locs:[];
+  const wpColKeys=wp?wp.colKeys:[];
+  const locIdx=wpLocs.indexOf(state.location);
+  let targetColKey = null;
+  if(locIdx >= 0 && wpColKeys[locIdx]) targetColKey = wpColKeys[locIdx];
+  state.activeColKey = targetColKey;
+  state.activeCols = ALL_COLS.filter(c => {
+    if(c.fixed) return true;
+    if(!c.enabled) return false;
+    return targetColKey && c.key === targetColKey;
+  });
+  const locationDrugs=getDrugsForLocation(state.location);
+  state.data=locationDrugs.map(d=>({...d,counts:{},computer:null,remark:'',done:false}));
+  buildDrugEntries();
+  updateProgress();
+  showInventorySection();
+  const notice=document.getElementById('drugFilterNotice');
+  const targetCol=ALL_COLS.find(c=>c.key===targetColKey);
+  document.getElementById('filterLocName').textContent=state.location;
+  document.getElementById('filterNoticeDetail').textContent=`　欄位：${targetCol?targetCol.label:(targetColKey||'—')}　共 ${locationDrugs.length}/${DRUGS.length} 項藥品`;
+  document.getElementById('filterNoticeBadge').textContent=`${locationDrugs.length} 項`;
+  notice.style.display='flex';
+  openDrug(0);
+  updatePhaseClickability();
+}
+function syncInfoBar(){
+  const d=document.getElementById('invDate').value;
+  const [y,m,dv]=d.split('-');
+  document.getElementById('infDate').textContent=`${y}/${m}/${dv}`;
+  document.getElementById('infShift').textContent=state.shift;
+  const wp=WORKPOINT_MAP[state.workpoint];
+  document.getElementById('infWP').textContent=wp?wp.label:state.workpoint;
+  document.getElementById('infLocation').textContent=state.location;
+  document.getElementById('infPharm').textContent=document.getElementById('pharmacist').value;
+}
+
+// ═══════════════════════════════════════════════════
+//  DRUG ENTRIES
+// ═══════════════════════════════════════════════════
+function buildDrugEntries(){
+  const container=document.getElementById('drugEntries'); container.innerHTML='';
+  const cols=state.activeCols;
+  const locationCols=cols.filter(c=>!c.fixed);
+  const isSingleCol=locationCols.length===1;
+  document.getElementById('pendCount').textContent=state.data.length;
+  state.data.forEach((drug,idx)=>{
+    const entry=document.createElement('div');
+    entry.className='drug-entry'; entry.id=`drug-${idx}`;
+    let locFieldsHtml='';
+    if(isSingleCol){
+      const col=locationCols[0];
+      locFieldsHtml=`<div class="single-loc-field"><div class="single-loc-label">📍 ${col.label}</div><div class="qty-stepper qty-stepper-lg" style="max-width:240px;margin:0 auto;"><button type="button" onclick="stepQty(${idx},'${col.key}',-1)" style="width:48px;font-size:22px;">−</button><input class="qty-input qty-input-lg" type="number" min="0" id="qty-${idx}-${col.key}" placeholder="0" oninput="onQtyChange(${idx})" onkeydown="handleQtyKey(event,${idx},'${col.key}')"/><button type="button" onclick="stepQty(${idx},'${col.key}',1)" style="width:48px;font-size:22px;">+</button></div></div>`;
+    } else {
+      locFieldsHtml=`<div class="loc-grid">`+cols.map(col=>`<div class="loc-field"><div class="loc-label">${col.label}</div><div class="qty-stepper"><button type="button" onclick="stepQty(${idx},'${col.key}',-1)">−</button><input class="qty-input" type="number" min="0" id="qty-${idx}-${col.key}" placeholder="0" oninput="onQtyChange(${idx})" onkeydown="handleQtyKey(event,${idx},'${col.key}')"/><button type="button" onclick="stepQty(${idx},'${col.key}',1)">+</button></div></div>`).join('')+`</div>`;
+    }
+    const defectCol=cols.find(c=>c.fixed);
+    const defectHtml=defectCol?`<div style="margin-top:10px;padding:10px 14px;background:#fffbeb;border:1.5px solid var(--amber-300);border-radius:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;"><span style="font-size:11px;font-weight:700;color:var(--amber-700);">⚠ ${defectCol.label}</span><div class="qty-stepper" style="width:140px;"><button type="button" onclick="stepQty(${idx},'${defectCol.key}',-1)">−</button><input class="qty-input" type="number" min="0" id="qty-${idx}-${defectCol.key}" placeholder="0" oninput="onQtyChange(${idx})" style="font-size:15px;" onkeydown="handleQtyKey(event,${idx},'${defectCol.key}')"/><button type="button" onclick="stepQty(${idx},'${defectCol.key}',1)">+</button></div></div>`:'';
+    const colCountDisplay=isSingleCol?(locationCols[0]?.label||''):`${locationCols.length} 個欄位`;
+    entry.innerHTML=`<div class="drug-header" onclick="toggleDrug(${idx})"><div class="drug-num" id="dnum-${idx}">${drug.no}</div><div class="drug-info"><div class="drug-name">${drug.name}${drug.brand?` <span style="font-weight:400;color:var(--slate-400)">(${drug.brand})</span>`:''}</div><div class="drug-meta">${drug.loc} ・ ${colCountDisplay}</div></div><div class="drug-status-icon" id="dicon-${idx}">○</div><div class="drug-collapse-icon">▾</div></div><div class="drug-body">${locFieldsHtml}${defectHtml}<div class="computer-qty-section"><div class="total-display"><span>實盤數量</span><strong id="tot-${idx}">0</strong></div><div style="display:flex;align-items:center;gap:6px;"><span class="comp-label">電腦量：</span><input class="comp-input" type="number" min="0" id="comp-${idx}" placeholder="—" oninput="onCompInput(${idx})" onchange="onCompChange(${idx})"/></div><div class="diff-badge" id="diff-${idx}">差異：—</div></div><div class="drug-remark"><textarea id="rmk-${idx}" placeholder="備註（不良品請寫藥名＋數量）" style="font-size:12px;padding:8px 10px;resize:none;height:52px;border:1.5px solid var(--slate-200);border-radius:8px;width:100%;font-family:var(--font-main);outline:none;" oninput="state.data[${idx}].remark=this.value"></textarea></div><div class="nav-btns">${idx>0?`<button class="btn btn-secondary" onclick="prevDrug(${idx})">← 上一項</button>`:''}<button class="btn btn-primary" onclick="confirmDrug(${idx})">確認完成 ✓</button>${idx<state.data.length-1?`<button class="btn btn-secondary" onclick="nextDrug(${idx})">下一項 →</button>`:''}</div></div>`;
+    container.appendChild(entry);
+  });
+}
+function toggleDrug(idx){document.getElementById(`drug-${idx}`).classList.toggle('open');}
+function openDrug(idx){
+  document.querySelectorAll('.drug-entry').forEach(e=>e.classList.remove('current','open'));
+  const el=document.getElementById(`drug-${idx}`);
+  if(!el)return;
+  el.classList.add('current','open');
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  setTimeout(()=>{const inputs=el.querySelectorAll('.qty-input');if(inputs[0])inputs[0].focus();},100);
+}
+function stepQty(idx,key,delta){
+  const inp=document.getElementById(`qty-${idx}-${key}`);
+  inp.value=Math.max(0,(parseInt(inp.value)||0)+delta);
+  onQtyChange(idx);
+}
+function onQtyChange(idx){
+  let total=0;
+  state.activeCols.forEach(c=>{const inp=document.getElementById(`qty-${idx}-${c.key}`);if(inp){const v=parseInt(inp.value);if(!isNaN(v))total+=v;}});
+  document.getElementById(`tot-${idx}`).textContent=total;
+  state.data[idx].total=total;
+  refreshDiff(idx);
+}
+function onCompInput(idx){const v=document.getElementById(`comp-${idx}`).value;state.data[idx].computer=v===''?null:parseInt(v);}
+function onCompChange(idx){onCompInput(idx);refreshDiff(idx);updateProgress();}
+function refreshDiff(idx){
+  const total=state.data[idx].total??0,comp=state.data[idx].computer;
+  const diffEl=document.getElementById(`diff-${idx}`);
+  if(comp===null||isNaN(comp)){diffEl.textContent='差異：—';diffEl.className='diff-badge';}
+  else{const diff=total-comp;diffEl.textContent=`差異：${diff>0?'+':''}${diff}`;diffEl.className='diff-badge '+(diff===0?'ok':'warn');}
+}
+function handleQtyKey(event,idx,key){
+  if(event.key==='Enter'){
+    const all=[...document.querySelectorAll(`#drug-${idx} .qty-input`)];
+    const cur=all.findIndex(i=>i.id===`qty-${idx}-${key}`);
+    if(cur<all.length-1)all[cur+1].focus();
+    else document.getElementById(`comp-${idx}`).focus();
+  }
+}
+function confirmDrug(idx){
+  const el=document.getElementById(`drug-${idx}`);
+  el.classList.remove('current','open');el.classList.add('done');
+  document.getElementById(`dnum-${idx}`).style.cssText='background:var(--teal-500);color:#fff';
+  document.getElementById(`dicon-${idx}`).textContent='✅';
+  state.data[idx].done=true;
+  state.activeCols.forEach(c=>{const inp=document.getElementById(`qty-${idx}-${c.key}`);state.data[idx].counts[c.key]=inp?parseInt(inp.value)||0:0;});
+  updateProgress();
+  if(idx<state.data.length-1)openDrug(idx+1);
+  else showSubmit();
+}
+function nextDrug(idx){if(idx<state.data.length-1)openDrug(idx+1);}
+function prevDrug(idx){if(idx>0)openDrug(idx-1);}
+function updateProgress(){
+  const done=(state.data||[]).filter(d=>d.done).length,total=(state.data||[]).length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('progressText').textContent=`${done} / ${total} 項目`;
+  document.getElementById('progressPct').textContent=pct+'%';
+  document.getElementById('doneCount').textContent=done;
+  document.getElementById('pendCount').textContent=total-done;
+  let diffC=0;
+  state.data.forEach(d=>{const comp=d.computer,tot=d.total??0;if(comp!==null&&!isNaN(comp)&&tot!==comp)diffC++;});
+  document.getElementById('diffCount').textContent=diffC;
+  document.getElementById('statDiff').className='stat-box '+(diffC>0?'warn':'ok');
+  document.getElementById('statDone').className='stat-box '+(done===total?'ok':'');
+  updatePhaseClickability();
+}
+function showSubmit(){
+  document.getElementById('submitSection').style.display='block';
+  document.getElementById('ph3').classList.add('active','done');
+  document.getElementById('submitSection').scrollIntoView({behavior:'smooth'});
+  updatePhaseClickability();
+}
+
+// ═══════════════════════════════════════════════════
+//  SUBMIT
+// ═══════════════════════════════════════════════════
+async function submitForm(){
+  const btn=document.getElementById('submitBtn');
+  if(btn){btn.disabled=true;btn.textContent='提交中…';}
+  const wp=WORKPOINT_MAP[state.workpoint];
+  const record={
+    id:Date.now(), date:document.getElementById('invDate').value,
+    shift:state.shift, personnel:`盤點人員（${state.personnel}）`,
+    workpoint:state.workpoint, wpLabel:wp?wp.label:state.workpoint,
+    location:state.location, pharmacist:document.getElementById('pharmacist').value,
+    supervisor:document.getElementById('supervisorName').value||'',
+    remark:document.getElementById('finalRemark').value||'',
+    done:state.data.filter(d=>d.done).length, total:state.data.length,
+    diffCount:state.data.filter(d=>d.computer!==null&&!isNaN(d.computer)&&(d.total??0)!==d.computer).length,
+    activeCols:[...state.activeCols], activeColKey:state.activeColKey,
+    data:state.data.map(d=>({...d})),
+  };
+  HISTORY.push(record);
+  setCloudBanner('loading','☁️ 正在同步盤點紀錄至雲端…',null);
+  const synced = await syncRecordToCloud(record);
+  if(synced) setCloudBanner('success',`☁️ 盤點紀錄已同步　${new Date().toLocaleTimeString('zh-TW')}`,'再次同步');
+  else if(GAS_URL) setCloudBanner('warning','☁️ 雲端同步失敗，資料已存本機','重試');
+  addAudit(`提交盤點紀錄：${record.date} ${state.shift} ${state.location}`);
+  if(btn) btn.style.display='none';
+  const panel=document.getElementById('nextInvPanel');
+  if(panel){
+    panel.style.display='block';
+    document.getElementById('nextInvMsg').textContent=
+      `${record.date} ${state.shift}｜${state.location}｜${record.pharmacist}　${synced?'☁️ 已同步雲端':'💾 已存本機'}`;
+    panel.scrollIntoView({behavior:'smooth'});
+  }
+}
+
+function startNextInventorySame(){
+  const savedPharmacist=document.getElementById('pharmacist').value;
+  const savedShift=state.shift, savedPersonnel=state.personnel;
+  const savedWorkpoint=state.workpoint, savedLocation=state.location;
+  resetInventoryState();
+  state.shift=savedShift; state.personnel=savedPersonnel;
+  state.workpoint=savedWorkpoint; state.location=savedLocation;
+  document.getElementById('pharmacist').value=savedPharmacist;
+  document.querySelectorAll('.shift-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===savedShift));
+  document.querySelectorAll('.personnel-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===savedPersonnel));
+  renderWorkpointButtons(savedPersonnel);
+  setTimeout(()=>{
+    document.querySelectorAll('.workpoint-btn').forEach(b=>b.classList.toggle('active',b.dataset.key===savedWorkpoint));
+    updateLocationDropdown(WORKPOINT_MAP[savedWorkpoint]?.locs||[]);
+    document.getElementById('locationSelect').value=savedLocation;
+    document.getElementById('locationCard').style.display='block';
+    document.getElementById('workpointCard').style.display='block';
+  },50);
+  startInventory();
+}
+function startNextInventoryNew(){
+  const savedPharmacist=document.getElementById('pharmacist').value;
+  const savedShift=state.shift;
+  resetInventoryState();
+  state.shift=savedShift;
+  document.getElementById('pharmacist').value=savedPharmacist;
+  document.querySelectorAll('.shift-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===savedShift));
+  showInfoSection();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function resetInventoryState(){
+  inventoryStarted=false;
+  state={shift:'',personnel:'',workpoint:'',location:'',activeCols:[],activeColKey:'',data:[],completedCount:0};
+  document.getElementById('startBtn').textContent='開始盤點 →';
+  document.getElementById('startBtn').style.display='block';
+  const submitBtn=document.getElementById('submitBtn');
+  if(submitBtn){submitBtn.disabled=false;submitBtn.textContent='🔒 確認提交盤點表';submitBtn.style.display='';}
+  document.getElementById('submitSection').style.display='none';
+  const panel=document.getElementById('nextInvPanel');if(panel)panel.style.display='none';
+  document.getElementById('supervisorName').value='';
+  document.getElementById('finalRemark').value='';
+  document.getElementById('drugEntries').innerHTML='';
+  document.getElementById('drugFilterNotice').style.display='none';
+  document.getElementById('workpointCard').style.display='none';
+  document.getElementById('locationCard').style.display='none';
+  document.getElementById('locationSelect').value='';
+  document.getElementById('drugPreviewBox').style.display='none';
+  document.getElementById('wpColPreview').style.display='none';
+  document.querySelectorAll('.personnel-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.workpoint-btn').forEach(b=>b.classList.remove('active'));
+  updateProgress(); updatePhaseClickability();
+}
+
+// ═══════════════════════════════════════════════════
+//  EXCEL EXPORT
+// ═══════════════════════════════════════════════════
+function exportCurrentExcel(){
+  if(!inventoryStarted){alert('請先完成至少一項盤點');return;}
+  const cols=state.activeCols;
+  const dateStr=document.getElementById('invDate').value||'—';
+  const wb=XLSX.utils.book_new();
+  const wp=WORKPOINT_MAP[state.workpoint];
+  const header=['編號','儲位','藥品名稱','品牌名',...cols.map(c=>c.label),'實盤合計','電腦量','差異','備註','完成'];
+  const rows=[[SITE_CONFIG.hospitalBadge+' — '+SITE_CONFIG.titlePrefix+SITE_CONFIG.titleEm+SITE_CONFIG.titleSuffix],[`日期：${dateStr}`,`班別：${state.shift}`,`工作點：${wp?wp.label:''}`,`位置：${state.location}`,`藥師：${document.getElementById('pharmacist').value}`],[],header];
+  state.data.forEach((d,idx)=>{
+    const row=[d.no,d.loc,d.name,d.brand];
+    cols.forEach(c=>{const qEl=document.getElementById(`qty-${idx}-${c.key}`);row.push(qEl?(parseInt(qEl.value)||0):0);});
+    const tot=d.total??0,comp=d.computer??'',diff=(d.computer!==null&&!isNaN(d.computer))?(tot-d.computer):'';
+    row.push(tot,comp,diff,d.remark||'',d.done?'✅':'○');
+    rows.push(row);
+  });
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:6},{wch:10},{wch:38},{wch:14},...cols.map(()=>({wch:9})),{wch:10},{wch:10},{wch:8},{wch:20},{wch:6}];
+  XLSX.utils.book_append_sheet(wb,ws,'盤點資料');
+  XLSX.writeFile(wb,`盤點表_${dateStr}_${state.shift||'—'}_${state.location||'—'}.xlsx`);
+}
+function exportMergedAllUnits(){
+  if(!HISTORY.length){alert('尚無歷史盤點紀錄');return;}
+  const wb=XLSX.utils.book_new();
+  const sumRows=[[SITE_CONFIG.hospitalBadge+' — 四級管制藥品總盤點彙整表'],[`匯出時間：${new Date().toLocaleString('zh-TW')}`],[],['#','日期','班別','工作點','位置','藥師','主管','完成/總計','差異數','備註']];
+  HISTORY.forEach((r,i)=>sumRows.push([i+1,r.date,r.shift,r.wpLabel||'',r.location,r.pharmacist,r.supervisor||'',`${r.done}/${r.total}`,r.diffCount,r.remark||'']));
+  const sw=XLSX.utils.aoa_to_sheet(sumRows); XLSX.utils.book_append_sheet(wb,sw,'彙整摘要');
+  HISTORY.forEach((r,ri)=>{
+    const cols=r.activeCols||DEFAULT_COLS.filter(c=>c.enabled||c.fixed);
+    const hdr=['編號','儲位','藥品名稱',...cols.map(c=>c.label),'實盤合計','電腦量','差異','備註'];
+    const rows=[[`${r.date} ${r.shift} ${r.wpLabel||''} ${r.location} — ${r.pharmacist}`],[],hdr];
+    r.data.forEach(d=>{
+      const row=[d.no,d.loc,d.name];
+      cols.forEach(c=>row.push(d.counts?.[c.key]??0));
+      const tot=d.total??0,comp=d.computer??'',diff=(d.computer!==null&&!isNaN(d.computer))?(tot-d.computer):'';
+      row.push(tot,comp,diff,d.remark||'');rows.push(row);
+    });
+    const sn=`${ri+1}_${r.date.slice(5)}_${r.location}`.slice(0,31).replace(/[\/\\?*\[\]:]/g,'_');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),sn);
+  });
+  XLSX.writeFile(wb,`管四盤點彙整_${new Date().toISOString().split('T')[0]}.xlsx`);
+  addAudit('匯出彙整所有單位盤點 Excel');
+}
+function exportDrugList(){const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet([['編號','儲位','藥品名稱','品牌名'],...DRUGS.map(d=>[d.no,d.loc,d.name,d.brand])]);XLSX.utils.book_append_sheet(wb,ws,'藥品清單');XLSX.writeFile(wb,'藥品清單範本.xlsx');}
+function exportAllHistorySummary(){if(!HISTORY.length){alert('尚無歷史盤點紀錄');return;}const wb=XLSX.utils.book_new();const rows=[['#','日期','班別','工作點','位置','藥師','主管','完成/總計','差異數','備註'],...HISTORY.map((r,i)=>[i+1,r.date,r.shift,r.wpLabel||'',r.location,r.pharmacist,r.supervisor||'',`${r.done}/${r.total}`,r.diffCount,r.remark||''])];XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'歷史摘要');XLSX.writeFile(wb,`歷史盤點摘要_${new Date().toISOString().split('T')[0]}.xlsx`);}
+function exportFilteredHistory(){const filtered=getFilteredHistory();if(!filtered.length){alert('篩選結果為空');return;}const wb=XLSX.utils.book_new();const rows=[['#','日期','班別','工作點','位置','藥師','主管','完成/總計','差異數','備註'],...filtered.map((r,i)=>[i+1,r.date,r.shift,r.wpLabel||'',r.location,r.pharmacist,r.supervisor||'',`${r.done}/${r.total}`,r.diffCount,r.remark||''])];XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'篩選結果');const from=document.getElementById('filterDateFrom').value;const to=document.getElementById('filterDateTo').value;XLSX.writeFile(wb,`篩選盤點_${from||'起'}_至_${to||'今'}.xlsx`);}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN OVERLAY
+// ═══════════════════════════════════════════════════
+function openAdminPin(){
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('pinSection').style.display='block';
+  document.getElementById('adminContent').style.display='none';
+  document.getElementById('pinInput').value='';
+  document.getElementById('pinError').classList.remove('show');
+  document.getElementById('lockoutMsg').style.display='none';
+  setTimeout(()=>document.getElementById('pinInput').focus(),100);
+}
+function closeAdmin(){
+  document.getElementById('adminOverlay').classList.remove('open');
+  clearInterval(sessionTimer);currentRole=null;
+  document.getElementById('currentRoleBadge').style.display='none';
+  document.getElementById('sessionTimer').textContent='';
+}
+function clearPinError(){document.getElementById('pinError').classList.remove('show');}
+function selectLoginRole(role,btn){
+  selectedLoginRole=role;
+  document.querySelectorAll('.pin-role-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function verifyPin(){
+  const now=Date.now();
+  if(lockoutUntil>now){const s=Math.ceil((lockoutUntil-now)/1000);document.getElementById('lockoutMsg').textContent=`登入被鎖定，請等待 ${s} 秒後再試`;document.getElementById('lockoutMsg').style.display='block';return;}
+  const val=document.getElementById('pinInput').value;
+  if(val===PINS[selectedLoginRole]){
+    loginAttempts=0;currentRole=selectedLoginRole;
+    document.getElementById('pinSection').style.display='none';
+    document.getElementById('adminContent').style.display='block';
+    const badge=document.getElementById('currentRoleBadge');
+    const labels={superadmin:'👑 超級管理員',admin:'🔧 管理員',viewer:'👁 檢視員'};
+    badge.textContent=labels[currentRole];badge.className=`role-badge ${currentRole}`;badge.style.display='inline';
+    applyRolePermissions();
+    sessionStart=Date.now();clearInterval(sessionTimer);
+    sessionTimer=setInterval(()=>{const el=Math.floor((Date.now()-sessionStart)/1000),r=SESSION_MINUTES*60-el;if(r<=0){closeAdmin();alert('工作階段已逾時');}else{const m=String(Math.floor(r/60)).padStart(2,'0'),s=String(r%60).padStart(2,'0');document.getElementById('sessionTimer').textContent=`⏱ ${m}:${s}`;}},1000);
+    renderAdminDrugs();renderColMgmtTable();renderHistory();refreshLocationFilter();
+    renderAuditLog();renderLocDrugLocationList();renderSiteConfigEditor();renderShiftEditor();
+    renderPersonnelEditor();populateWPPersonnelSelect();renderCloudSettings();
+    addAudit(`以「${labels[currentRole]}」身份登入後台`);
+  } else {
+    loginAttempts++;document.getElementById('pinError').classList.add('show');document.getElementById('pinInput').value='';
+    if(loginAttempts>=5){lockoutUntil=Date.now()+60000;document.getElementById('lockoutMsg').textContent='嘗試次數過多，鎖定 60 秒';document.getElementById('lockoutMsg').style.display='block';}
+  }
+}
+function applyRolePermissions(){
+  const perms=ROLE_PERMISSIONS[currentRole]||{};
+  ['history','drugs','location-drugs','siteconfig','wpconfig','cols','export','audit','security','cloud'].forEach(id=>{
+    const el=document.getElementById(`tab-${id}`);if(!el)return;
+    if(perms[id]===false){el.classList.add('locked');el.onclick=()=>alert(`您的角色（${currentRole}）無此功能權限`);}
+    else{el.classList.remove('locked');el.onclick=()=>switchAdminTab(id,el);}
+  });
+  const clearHist=document.getElementById('clearHistoryBtn');if(clearHist)clearHist.style.display=can('deleteRecords')?'':'none';
+  const clearAudit=document.getElementById('clearAuditBtn');if(clearAudit)clearAudit.style.display=can('audit')?'':'none';
+  const addDrug=document.getElementById('addDrugRowBtn');if(addDrug)addDrug.style.display=can('drugs')?'':'none';
+  const saveDrugs=document.getElementById('saveDrugsBtn');if(saveDrugs)saveDrugs.style.display=can('drugs')?'':'none';
+}
+function switchAdminTab(name,btn){
+  if(!can(name)){alert(`您的角色（${currentRole}）無此功能權限`);return;}
+  document.querySelectorAll('.admin-tab:not(.locked)').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  ['history','drugs','location-drugs','siteconfig','wpconfig','cols','export','audit','security','cloud'].forEach(t=>{
+    const el=document.getElementById(`adminTab-${t}`);if(el)el.style.display=t===name?'block':'none';
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  SITE CONFIG EDITOR
+// ═══════════════════════════════════════════════════
+function renderSiteConfigEditor(){
+  ['hospitalBadge','titlePrefix','titleEm','titleSuffix','subtitle'].forEach(f=>{
+    const el=document.getElementById(`cfg-${f}`);if(el)el.value=SITE_CONFIG[f]||'';
+  });
+}
+function saveCfgField(field){
+  if(!can('siteconfig')){alert('您無此權限');return;}
+  SITE_CONFIG[field]=document.getElementById(`cfg-${field}`).value;
+  applySiteConfig();
+  gasPost({action:'saveConfig',config:SITE_CONFIG}).catch(()=>{});
+  addAudit(`修改網站設定：${field}`);
+  const btn=event.target;btn.textContent='✓ 已同步';btn.style.background='var(--teal-500)';
+  setTimeout(()=>{btn.textContent='儲存';btn.style.background='';},1800);
+}
+function saveAllCfgTitle(){
+  if(!can('siteconfig')){alert('您無此權限');return;}
+  ['hospitalBadge','titlePrefix','titleEm','titleSuffix','subtitle'].forEach(f=>{SITE_CONFIG[f]=document.getElementById(`cfg-${f}`).value;});
+  applySiteConfig();
+  pushToCloud('config');
+  addAudit('儲存全部標題設定並同步雲端');
+  alert('✅ 標題設定已儲存並推送雲端！');
+}
+
+// ═══════════════════════════════════════════════════
+//  SHIFT CONFIG EDITOR
+// ═══════════════════════════════════════════════════
+function renderShiftEditor(){
+  const list=document.getElementById('shiftEditorList');list.innerHTML='';
+  SHIFTS.forEach((s,i)=>{
+    const row=document.createElement('div');row.className='shift-editor-row';
+    row.innerHTML=`<input type="text" value="${s.val}" placeholder="班別名稱" id="se-val-${i}"/><input type="text" value="${s.time}" placeholder="時間說明" id="se-time-${i}"/><input type="text" value="${s.icon}" placeholder="圖示" id="se-icon-${i}" style="width:60px;"/><button class="row-del-btn" onclick="deleteShiftRow(${i})">✕</button>`;
+    list.appendChild(row);
+  });
+}
+function addShiftRow(){SHIFTS.push({val:'新班別',icon:'⏰',time:''});renderShiftEditor();}
+function deleteShiftRow(i){
+  if(SHIFTS.length<=1){alert('至少需保留一個班別');return;}
+  if(!confirm(`確定刪除「${SHIFTS[i].val}」班別？`))return;
+  SHIFTS.splice(i,1);renderShiftEditor();
+}
+function saveShiftConfig(){
+  if(!can('siteconfig')){alert('您無此權限');return;}
+  SHIFTS=SHIFTS.map((_,i)=>({val:document.getElementById(`se-val-${i}`)?.value||'',time:document.getElementById(`se-time-${i}`)?.value||'',icon:document.getElementById(`se-icon-${i}`)?.value||'⏰'})).filter(s=>s.val);
+  renderShiftButtons();
+  pushToCloud('shifts');
+  addAudit(`儲存班別設定（${SHIFTS.length}個）並同步雲端`);
+  alert('✅ 班別設定已儲存並推送雲端！');
+}
+
+// ═══════════════════════════════════════════════════
+//  PERSONNEL CONFIG EDITOR
+// ═══════════════════════════════════════════════════
+function renderPersonnelEditor(){
+  const list=document.getElementById('personnelEditorList');list.innerHTML='';
+  PERSONNEL_LIST.forEach((p,i)=>{
+    const row=document.createElement('div');row.className='personnel-editor-row';
+    row.innerHTML=`<div class="personnel-editor-row-header"><input type="text" value="${p.icon}" placeholder="圖示" style="width:50px;" id="pe-icon-${i}"/><input type="text" value="${p.val}" placeholder="代號" style="width:100px;" id="pe-val-${i}"/><input type="text" value="${p.title}" placeholder="顯示標題" style="flex:1;" id="pe-title-${i}"/><button class="row-del-btn" onclick="deletePersonnelRow(${i})" style="flex:none;">✕</button></div><textarea id="pe-desc-${i}" style="font-size:11px;padding:7px 10px;resize:vertical;height:60px;width:100%;border:1.5px solid var(--slate-200);border-radius:6px;font-family:var(--font-main);outline:none;">${p.desc}</textarea>`;
+    list.appendChild(row);
+  });
+}
+function addPersonnelRow(){PERSONNEL_LIST.push({val:'新類別',icon:'📝',title:'新盤點人員類別',desc:''});renderPersonnelEditor();}
+function deletePersonnelRow(i){
+  if(PERSONNEL_LIST.length<=1){alert('至少需保留一個人員類別');return;}
+  if(!confirm(`確定刪除「${PERSONNEL_LIST[i].title}」？`))return;
+  PERSONNEL_LIST.splice(i,1);renderPersonnelEditor();
+}
+function savePersonnelConfig(){
+  if(!can('siteconfig')){alert('您無此權限');return;}
+  PERSONNEL_LIST=PERSONNEL_LIST.map((_,i)=>({val:document.getElementById(`pe-val-${i}`)?.value||'',icon:document.getElementById(`pe-icon-${i}`)?.value||'📝',title:document.getElementById(`pe-title-${i}`)?.value||'',desc:document.getElementById(`pe-desc-${i}`)?.value||''})).filter(p=>p.val);
+  renderPersonnelButtons();
+  pushToCloud('personnel');
+  addAudit(`儲存人員類別設定並同步雲端`);
+  alert('✅ 人員類別設定已儲存並推送雲端！');
+}
+
+// ═══════════════════════════════════════════════════
+//  WORKPOINT CONFIG EDITOR
+// ═══════════════════════════════════════════════════
+function populateWPPersonnelSelect(){
+  const sel=document.getElementById('wpPersonnelSelect');const cur=sel.value;
+  sel.innerHTML='<option value="">── 請選擇 ──</option>';
+  PERSONNEL_LIST.forEach(p=>{const o=document.createElement('option');o.value=p.val;o.textContent=p.title;sel.appendChild(o);});
+  sel.value=cur;if(cur)renderWPEditor(cur);
+}
+function renderWPEditor(personnelVal){
+  if(!personnelVal){document.getElementById('wpEditorWrap').style.display='none';return;}
+  const keys=PERSONNEL_WORKPOINTS[personnelVal]||[];
+  const tbody=document.getElementById('wpEditorTbody');tbody.innerHTML='';
+  const readonly=!can('wpconfig');
+  keys.forEach((key,i)=>{
+    const wp=WORKPOINT_MAP[key]||{label:'',locs:[],colKeys:[]};
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input class="tbl-input" value="${key}" id="wpe-key-${personnelVal}-${i}" ${readonly?'readonly':''}></td><td><input class="tbl-input" value="${wp.label}" id="wpe-label-${personnelVal}-${i}" ${readonly?'readonly':''}></td><td><input class="tbl-input" value="${wp.locs.join(',')}" id="wpe-locs-${personnelVal}-${i}" ${readonly?'readonly':''}></td><td><input class="tbl-input" value="${(wp.colKeys||[]).join(',')}" id="wpe-cols-${personnelVal}-${i}" ${readonly?'readonly':''} style="font-family:var(--font-mono);font-size:11px;"></td><td>${readonly?'':(`<button class="row-del-btn" onclick="deleteWPRow('${personnelVal}',${i})">✕</button>`)}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('wpEditorWrap').style.display='block';
+}
+function addWPRow(){
+  const personnelVal=document.getElementById('wpPersonnelSelect').value;
+  if(!personnelVal){alert('請先選擇人員類別');return;}
+  const newKey=`${personnelVal}_新工作點${Date.now()}`;
+  if(!PERSONNEL_WORKPOINTS[personnelVal])PERSONNEL_WORKPOINTS[personnelVal]=[];
+  PERSONNEL_WORKPOINTS[personnelVal].push(newKey);
+  WORKPOINT_MAP[newKey]={label:'新工作點',locs:[],colKeys:[]};
+  renderWPEditor(personnelVal);
+}
+function deleteWPRow(personnelVal,i){
+  if(!can('wpconfig')){alert('您無此權限');return;}
+  const key=PERSONNEL_WORKPOINTS[personnelVal][i];
+  if(!confirm(`確定刪除工作點「${key}」？`))return;
+  delete WORKPOINT_MAP[key];PERSONNEL_WORKPOINTS[personnelVal].splice(i,1);renderWPEditor(personnelVal);
+}
+function saveWPConfig(){
+  if(!can('wpconfig')){alert('您無此權限');return;}
+  const personnelVal=document.getElementById('wpPersonnelSelect').value;
+  if(!personnelVal){alert('請先選擇人員類別');return;}
+  const oldKeys=[...(PERSONNEL_WORKPOINTS[personnelVal]||[])];const newKeys=[];
+  oldKeys.forEach((_,i)=>{
+    const newKey=document.getElementById(`wpe-key-${personnelVal}-${i}`)?.value?.trim();if(!newKey)return;
+    const label=document.getElementById(`wpe-label-${personnelVal}-${i}`)?.value||'';
+    const locs=(document.getElementById(`wpe-locs-${personnelVal}-${i}`)?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
+    const colKeys=(document.getElementById(`wpe-cols-${personnelVal}-${i}`)?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
+    if(newKey!==_&&WORKPOINT_MAP[_])delete WORKPOINT_MAP[_];
+    WORKPOINT_MAP[newKey]={label,locs,colKeys};newKeys.push(newKey);
+  });
+  PERSONNEL_WORKPOINTS[personnelVal]=newKeys;
+  pushToCloud('workpoints');
+  addAudit(`儲存「${personnelVal}」工作點設定並同步雲端`);
+  alert(`✅ 工作點設定已儲存並推送雲端！`);renderWPEditor(personnelVal);
+}
+
+// ═══════════════════════════════════════════════════
+//  HISTORY
+// ═══════════════════════════════════════════════════
+function refreshLocationFilter(){
+  const sel=document.getElementById('filterLocation');const cur=sel.value;
+  sel.innerHTML='<option value="">全部</option>';
+  const locs=[...new Set(HISTORY.map(r=>r.location).filter(Boolean))];
+  locs.forEach(l=>{const o=document.createElement('option');o.value=l;o.textContent=l;sel.appendChild(o);});
+  sel.value=cur;
+}
+function getFilteredHistory(){
+  const from=document.getElementById('filterDateFrom').value;const to=document.getElementById('filterDateTo').value;
+  const shift=document.getElementById('filterShift').value;const loc=document.getElementById('filterLocation').value;
+  return HISTORY.filter(r=>{
+    if(from&&r.date<from)return false;if(to&&r.date>to)return false;
+    if(shift&&r.shift!==shift)return false;if(loc&&r.location!==loc)return false;return true;
+  });
+}
+function applyHistoryFilter(){const f=getFilteredHistory();const lbl=document.getElementById('filterResultLabel');lbl.textContent=`共 ${f.length} 筆`;lbl.style.display='flex';renderHistoryTable(f);}
+function clearHistoryFilter(){['filterDateFrom','filterDateTo','filterShift','filterLocation'].forEach(id=>document.getElementById(id).value='');document.getElementById('filterResultLabel').style.display='none';renderHistory();}
+function renderHistory(){renderHistoryTable(HISTORY);}
+function renderHistoryTable(records){
+  const tbody=document.getElementById('historyTbody');const empty=document.getElementById('historyEmpty');
+  tbody.innerHTML='';
+  if(!records.length){empty.style.display='block';return;}
+  empty.style.display='none';
+  records.forEach((r,i)=>{
+    const hasDiff=r.diffCount>0;const tr=document.createElement('tr');const canDel=can('deleteRecords');
+    tr.innerHTML=`<td style="color:var(--slate-400);font-family:var(--font-mono);font-size:11px;">${i+1}</td><td style="font-family:var(--font-mono);font-size:12px;font-weight:600;">${r.date}</td><td><span style="background:var(--blue-50);color:var(--blue-700);border:1px solid var(--blue-200);padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;">${r.shift}</span></td><td style="font-size:12px;">${r.location}</td><td style="font-size:12px;">${r.pharmacist}</td><td style="font-family:var(--font-mono);font-size:12px;">${r.done}/${r.total}</td><td><span class="stat-diff-pill ${hasDiff?'warn':'ok'}">${hasDiff?'⚠ '+r.diffCount+'項':'✓ 無差異'}</span></td><td style="display:flex;gap:5px;"><button style="background:var(--blue-50);border:1px solid var(--blue-200);border-radius:6px;color:var(--blue-600);font-size:12px;padding:4px 10px;cursor:pointer;font-weight:600;" onclick="viewRecord(${r.id})">詳情</button>${canDel?`<button class="row-del-btn" onclick="deleteRecord(${r.id})">刪除</button>`:''}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function viewRecord(id){
+  const r=HISTORY.find(h=>h.id===id);if(!r)return;
+  document.getElementById('recordDetailTitle').textContent=`盤點紀錄 — ${r.date} ${r.shift} ${r.wpLabel||''}`;
+  const body=document.getElementById('recordDetailBody');
+  const diffItems=r.data.filter(d=>d.computer!==null&&!isNaN(d.computer)&&(d.total??0)!==d.computer);
+  body.innerHTML=`<div class="record-meta-grid"><div class="record-meta-item"><div class="record-meta-label">日期</div><div class="record-meta-value">${r.date}</div></div><div class="record-meta-item"><div class="record-meta-label">班別</div><div class="record-meta-value">${r.shift}</div></div><div class="record-meta-item"><div class="record-meta-label">工作點</div><div class="record-meta-value">${r.wpLabel||'—'}</div></div><div class="record-meta-item"><div class="record-meta-label">盤點位置</div><div class="record-meta-value">${r.location}</div></div><div class="record-meta-item"><div class="record-meta-label">執行藥師</div><div class="record-meta-value">${r.pharmacist}</div></div><div class="record-meta-item"><div class="record-meta-label">完成率</div><div class="record-meta-value">${r.done}/${r.total} 項</div></div></div>${r.remark?`<div style="padding:12px;background:var(--blue-50);border-radius:8px;border:1px solid var(--blue-200);font-size:13px;margin-bottom:16px;"><strong style="color:var(--blue-700);">備註：</strong>${r.remark}</div>`:''}<div style="font-size:13px;font-weight:700;color:var(--slate-700);margin-bottom:8px;">${diffItems.length?`⚠️ 差異項目（${diffItems.length}）`:'✅ 所有品項無差異'}</div>${diffItems.length?`<div class="admin-table-wrap"><table class="admin-tbl"><thead><tr><th>藥品名稱</th><th>實盤</th><th>電腦量</th><th>差異</th></tr></thead><tbody>${diffItems.map(d=>{const diff=(d.total??0)-d.computer;return`<tr><td style="font-size:12px;">${d.name}</td><td style="font-family:var(--font-mono);text-align:center;">${d.total??0}</td><td style="font-family:var(--font-mono);text-align:center;">${d.computer}</td><td style="font-family:var(--font-mono);text-align:center;color:${diff===0?'var(--teal-600)':'var(--red-600)'};">${diff>0?'+':''}${diff}</td></tr>`;}).join('')}</tbody></table></div>`:''}`;
+  document.getElementById('recordDetailOverlay').classList.add('open');
+}
+function closeRecordDetail(){document.getElementById('recordDetailOverlay').classList.remove('open');}
+function deleteRecord(id){
+  if(!can('deleteRecords')){alert('您無刪除權限');return;}
+  if(!confirm('確定刪除此筆紀錄？'))return;
+  const r=HISTORY.find(h=>h.id===id);
+  addAudit(`刪除盤點紀錄：${r?r.date+' '+r.location:id}`);
+  HISTORY=HISTORY.filter(h=>h.id!==id);renderHistory();refreshLocationFilter();
+}
+function clearAllHistory(){
+  if(!can('deleteRecords')){alert('您無刪除權限');return;}
+  if(!HISTORY.length){alert('目前沒有紀錄');return;}
+  if(!confirm(`確定清除全部 ${HISTORY.length} 筆盤點紀錄？`))return;
+  addAudit(`清除全部 ${HISTORY.length} 筆盤點紀錄`);
+  HISTORY=[];renderHistory();refreshLocationFilter();
+  document.getElementById('filterResultLabel').style.display='none';
+}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN DRUGS
+// ═══════════════════════════════════════════════════
+function renderAdminDrugs(){
+  const tbody=document.getElementById('adminDrugTbody');tbody.innerHTML='';
+  const readonly=!can('drugs');
+  DRUGS.forEach((d,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:var(--slate-400);font-family:var(--font-mono);font-size:11px;">${i+1}</td><td><input class="tbl-input" value="${d.loc}" data-field="loc" data-idx="${i}" ${readonly?'readonly':''}></td><td><input class="tbl-input" value="${d.name}" data-field="name" data-idx="${i}" ${readonly?'readonly':''}></td><td><input class="tbl-input" value="${d.brand}" data-field="brand" data-idx="${i}" ${readonly?'readonly':''}></td><td>${readonly?'':(`<button class="row-del-btn" onclick="deleteDrugRow(${i})">刪除</button>`)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function addDrugRow(){if(!can('drugs')){alert('您無此權限');return;}DRUGS.push({no:DRUGS.length+1,loc:'',name:'新藥品',brand:''});renderAdminDrugs();}
+function deleteDrugRow(i){
+  if(!can('drugs')){alert('您無此權限');return;}
+  if(!confirm(`確定刪除「${DRUGS[i].name}」？`))return;
+  addAudit(`刪除藥品：${DRUGS[i].name}`);DRUGS.splice(i,1);DRUGS.forEach((d,j)=>d.no=j+1);renderAdminDrugs();
+}
+function saveAdminDrugs(){
+  if(!can('drugs')){alert('您無此權限');return;}
+  document.querySelectorAll('#adminDrugTbody input').forEach(inp=>{const idx=parseInt(inp.dataset.idx),field=inp.dataset.field;if(DRUGS[idx])DRUGS[idx][field]=inp.value;});
+  pushToCloud('drugs');
+  addAudit(`儲存藥品清單（${DRUGS.length} 筆）並同步雲端`);
+  alert(`✅ 已儲存 ${DRUGS.length} 筆藥品資料並推送雲端`);
+}
+
+// ═══════════════════════════════════════════════════
+//  LOCATION DRUG MAPPING
+// ═══════════════════════════════════════════════════
+function getAllLocations(){const locs=new Set();Object.values(WORKPOINT_MAP).forEach(wp=>wp.locs.forEach(l=>locs.add(l)));return[...locs].sort();}
+function renderLocDrugLocationList(){
+  const sel=document.getElementById('locDrugSelect');const cur=sel.value;
+  sel.innerHTML='<option value="">── 請選擇位置 ──</option>';
+  getAllLocations().forEach(l=>{const o=document.createElement('option');o.value=l;o.textContent=l+(LOCATION_DRUG_MAP[l]?` (${LOCATION_DRUG_MAP[l].length}項)`:'');sel.appendChild(o);});
+  sel.value=cur;
+}
+function renderLocDrugEditor(loc){
+  if(!loc){document.getElementById('locDrugEditorWrap').style.display='none';return;}
+  const selected=LOCATION_DRUG_MAP[loc]||[];
+  const tbody=document.getElementById('locDrugTbody');tbody.innerHTML='';
+  const readonly=!can('location-drugs');
+  DRUGS.forEach(d=>{
+    const checked=selected.length===0||selected.includes(d.no);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="text-align:center;"><input type="checkbox" ${checked?'checked':''} value="${d.no}" id="ldm-${d.no}" ${readonly?'disabled':''}></td><td style="font-family:var(--font-mono);font-size:11px;color:var(--slate-400);">${d.no}</td><td style="font-family:var(--font-mono);font-size:11px;color:var(--slate-500);">${d.loc}</td><td style="font-size:13px;">${d.name}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('locDrugEditorWrap').style.display='block';
+}
+function locDrugCheckAll(){document.querySelectorAll('#locDrugTbody input[type=checkbox]').forEach(c=>c.checked=true);}
+function locDrugUncheckAll(){document.querySelectorAll('#locDrugTbody input[type=checkbox]').forEach(c=>c.checked=false);}
+function saveLocDrugMapping(){
+  if(!can('location-drugs')){alert('您無此權限');return;}
+  const loc=document.getElementById('locDrugSelect').value;if(!loc){alert('請先選擇位置');return;}
+  const checked=[...document.querySelectorAll('#locDrugTbody input[type=checkbox]:checked')].map(c=>parseInt(c.value));
+  if(checked.length===DRUGS.length)LOCATION_DRUG_MAP[loc]=[];else LOCATION_DRUG_MAP[loc]=checked;
+  pushToCloud('locDrug');
+  addAudit(`設定位置「${loc}」藥品對應並同步雲端`);
+  renderLocDrugLocationList();
+  alert(`✅ 位置「${loc}」已設定並推送雲端`);
+}
+function clearLocDrugMapping(){
+  if(!can('location-drugs')){alert('您無此權限');return;}
+  const loc=document.getElementById('locDrugSelect').value;if(!loc){alert('請先選擇位置');return;}
+  if(!confirm(`確定清除「${loc}」的藥品設定？`))return;
+  delete LOCATION_DRUG_MAP[loc];
+  pushToCloud('locDrug');
+  renderLocDrugLocationList();
+  document.getElementById('locDrugSelect').value=loc;renderLocDrugEditor(loc);
+  addAudit(`清除位置「${loc}」藥品設定並同步雲端`);
+  alert('✅ 已清除並同步雲端');
+}
+
+// ═══════════════════════════════════════════════════
+//  COLUMN MANAGEMENT
+// ═══════════════════════════════════════════════════
+function renderColMgmtTable(){
+  const tbody=document.getElementById('colMgmtTbody');tbody.innerHTML='';
+  const q=colSearchQuery.toLowerCase();const readonly=!can('cols');
+  ALL_COLS.forEach((col,i)=>{
+    if(q&&!col.label.toLowerCase().includes(q)&&!col.key.toLowerCase().includes(q))return;
+    const tr=document.createElement('tr');if(col.fixed)tr.className='col-fixed';
+    tr.innerHTML=`<td>${col.fixed?'<span style="color:var(--slate-300);font-size:13px;padding:0 4px;">⚑</span>':'<span style="color:var(--slate-300)">⠿</span>'}</td><td><input class="col-label-input" value="${col.label}" data-colidx="${i}" ${col.fixed||readonly?'readonly style="color:var(--slate-400);cursor:not-allowed;"':''} oninput="updateColLabel(${i},this.value)"/></td><td><span class="col-key-badge">${col.key}</span></td><td style="text-align:center;"><input type="checkbox" class="col-toggle-checkbox" ${col.enabled||col.fixed?'checked':''} ${col.fixed||readonly?'disabled':''} onchange="toggleColEnabled(${i},this.checked)"/></td><td style="text-align:center;">${col.fixed?'<span class="col-fixed-badge">固定</span>':(readonly?'':`<button class="col-del-btn" onclick="deleteCol(${i})">刪除</button>`)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function filterColTable(q){colSearchQuery=q;renderColMgmtTable();}
+function updateColLabel(idx,val){ALL_COLS[idx].label=val;}
+function toggleColEnabled(idx,checked){ALL_COLS[idx].enabled=checked;}
+function deleteCol(idx){
+  if(!can('cols')){alert('您無此權限');return;}
+  const col=ALL_COLS[idx];if(col.fixed)return;
+  if(!confirm(`確定刪除欄位「${col.label}」？`))return;
+  addAudit(`刪除欄位：${col.label}`);ALL_COLS.splice(idx,1);renderColMgmtTable();
+}
+function enableAllCols(){ALL_COLS.forEach(c=>{if(!c.fixed)c.enabled=true;});renderColMgmtTable();}
+function disableAllCols(){ALL_COLS.forEach(c=>{if(!c.fixed)c.enabled=false;});renderColMgmtTable();}
+function toggleNewColForm(){
+  const form=document.getElementById('newColForm');const shown=form.classList.toggle('show');
+  if(shown){document.getElementById('newColLabel').value='';document.getElementById('newColKey').value='';document.getElementById('newColError').style.display='none';document.getElementById('newColLabel').focus();}
+}
+function addNewCol(){
+  if(!can('cols')){alert('您無此權限');return;}
+  const label=document.getElementById('newColLabel').value.trim();const key=document.getElementById('newColKey').value.trim();
+  const errEl=document.getElementById('newColError');errEl.style.display='none';
+  if(!label){errEl.textContent='請輸入欄位名稱';errEl.style.display='block';return;}
+  if(!key){errEl.textContent='請輸入欄位代號';errEl.style.display='block';return;}
+  if(!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(key)){errEl.textContent='代號須以英文開頭，只允許英數字及底線';errEl.style.display='block';return;}
+  if(ALL_COLS.find(c=>c.key===key)){errEl.textContent=`代號「${key}」已存在`;errEl.style.display='block';return;}
+  const fixedIdx=ALL_COLS.findIndex(c=>c.fixed);
+  const newCol={key,label,enabled:true};
+  if(fixedIdx>=0)ALL_COLS.splice(fixedIdx,0,newCol);else ALL_COLS.push(newCol);
+  addAudit(`新增欄位：${label}（${key}）`);
+  toggleNewColForm();renderColMgmtTable();
+}
+function saveColSettings(){
+  if(!can('cols')){alert('您無此權限');return;}
+  document.querySelectorAll('[data-colidx]').forEach(inp=>{const idx=parseInt(inp.dataset.colidx);if(ALL_COLS[idx]&&!ALL_COLS[idx].fixed)ALL_COLS[idx].label=inp.value;});
+  pushToCloud('columns');
+  addAudit('儲存欄位設定並同步雲端');
+  alert('✅ 欄位設定已儲存並推送雲端。');
+}
+function resetColSettings(){
+  if(!can('cols')){alert('您無此權限');return;}
+  if(!confirm('確定還原所有欄位設定至預設值？'))return;
+  ALL_COLS=JSON.parse(JSON.stringify(DEFAULT_COLS));
+  addAudit('還原欄位設定至預設');renderColMgmtTable();alert('✅ 已還原預設欄位設定。');
+}
+
+// ═══════════════════════════════════════════════════
+//  AUDIT LOG
+// ═══════════════════════════════════════════════════
+function renderAuditLog(){
+  const container=document.getElementById('auditLogContainer');container.innerHTML='';
+  if(!AUDIT_LOG.length){container.innerHTML='<div class="audit-empty">📝 目前沒有操作記錄</div>';return;}
+  const roleColors={superadmin:'background:#fde68a;color:#92400e;',admin:'background:#bfdbfe;color:#1e40af;',viewer:'background:#d1fae5;color:#065f46;',system:'background:#e2e8f0;color:#475569;'};
+  AUDIT_LOG.forEach(log=>{
+    const ts=new Date(log.ts);
+    const timeStr=ts.toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const div=document.createElement('div');div.className='audit-row';
+    div.innerHTML=`<div class="audit-time">${timeStr}</div><span class="audit-role-badge" style="${roleColors[log.role]||''}">${log.role}</span><div class="audit-action">${log.action}</div>`;
+    container.appendChild(div);
+  });
+}
+function clearAuditLog(){
+  if(!can('audit')){alert('您無此權限');return;}
+  if(!confirm('確定清除所有操作日誌？'))return;
+  AUDIT_LOG=[];renderAuditLog();
+}
+
+// ═══════════════════════════════════════════════════
+//  PIN CHANGE
+// ═══════════════════════════════════════════════════
+function changePin(role){
+  const sfx=role.charAt(0).toUpperCase()+role.slice(1);
+  const canChange=role==='superadmin'?can('security')&&currentRole==='superadmin':can('security')&&(currentRole==='superadmin'||currentRole===role);
+  if(!canChange){alert('您無修改此密碼的權限');return;}
+  const old=document.getElementById(`oldPin${sfx}`).value;
+  const nw=document.getElementById(`newPin${sfx}`).value;
+  const cnf=document.getElementById(`confirmPin${sfx}`).value;
+  const errEl=document.getElementById(`pinErr${sfx}`);errEl.style.display='none';
+  if(old!==PINS[role]){errEl.textContent='目前密碼錯誤';errEl.style.display='block';return;}
+  if(nw.length<4){errEl.textContent='密碼需至少 4 位';errEl.style.display='block';return;}
+  if(nw!==cnf){errEl.textContent='兩次輸入不一致';errEl.style.display='block';return;}
+  PINS[role]=nw;
+  ['oldPin','newPin','confirmPin'].forEach(p=>{document.getElementById(p+sfx).value='';});
+  addAudit(`修改「${role}」角色密碼`);alert(`✅ ${role} 密碼已更新！`);
+}
+
+document.getElementById('adminOverlay').addEventListener('click',function(e){if(e.target===this)closeAdmin();});
+document.getElementById('recordDetailOverlay').addEventListener('click',function(e){if(e.target===this)closeRecordDetail();});
+</script>
+</body>
+</html>
